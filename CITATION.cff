@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "pooch-doi"
+abstract: "This is an awesome project. It does many things."
+keywords:
+  - keyword1
+  - keyword2
+  - keyword3
+authors:
+  - name: "Dominic Kempf"
+    orcid: "https://orcid.org/0000-0000-0000-0000"
+date-released: "2025-10-30"
+identifiers:
+  - description: This is a collection of archived snapshots of this project.
+    type: doi
+    value: "10.5281/zenodo.123456"
+license: BSD-2
+repository-code: git@github.com:ssciwr/pooch-doi.git
