@@ -1,3 +1,4 @@
+from typing import Tuple
 import logging
 
 
@@ -19,3 +20,20 @@ def get_logger() -> logging.Logger:
         The logger object for Pooch
     """
     return LOGGER
+
+
+def parse_doi(doi: str) -> Tuple[str, str]:
+    if doi.startswith("doi://"):
+        raise ValueError(
+            f"Invalid DOI link '{doi}'. You must not use '//' after 'doi:'."
+        )
+    if doi.startswith("doi:"):
+        doi = doi[4:]
+    parts = doi.split("/")
+    if "zenodo" in parts[1].lower():
+        netloc = "/".join(parts[:2])
+        path = "/" + "/".join(parts[2:])
+    else:
+        netloc = "/".join(parts[:-1])
+        path = "/" + parts[-1]
+    return netloc, path
