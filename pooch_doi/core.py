@@ -1,4 +1,17 @@
-from typing import Optional, override
+import functools
+from typing import Optional
+
+try:
+    from typing import override
+except ImportError:
+    # dummy override decorator
+    from functools import update_wrapper
+
+    def override(func):
+        return functools.update_wrapper(
+            lambda *args, **kwargs: func(*args, **kwargs), func
+        )
+
 
 from pooch import Pooch, retrieve
 from .repository import doi_to_repository
