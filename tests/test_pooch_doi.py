@@ -1,5 +1,11 @@
+import pooch
+
 import pooch_doi
 
 
 def test_pooch_doi():
-    assert pooch_doi.add_one(1) == 2
+    _ = pooch_doi.DOIPooch(
+        path=pooch.os_cache("poch_doi_test"),
+        doi="10.5281/zenodo.4924875",
+        populate_registry=False,
+    )
