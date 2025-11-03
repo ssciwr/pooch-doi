@@ -1,3 +1,4 @@
+from typing import Optional
 from .utils import get_logger
 
 DEFAULT_TIMEOUT = 30
@@ -100,7 +101,7 @@ def doi_to_repository(doi):
 
 class DataRepository:  # pylint: disable=too-few-public-methods, missing-class-docstring
     # A URL for an issue tracker for this implementation
-    issue_tracker: str | None = None
+    issue_tracker: Optional[str] = None
 
     # Whether the repository allows self-hosting
     allows_self_hosting: bool = False
@@ -111,7 +112,7 @@ class DataRepository:  # pylint: disable=too-few-public-methods, missing-class-d
 
     # A warning message to display to the end user if this repository is used.
     # This can be useful whenever a data repository is only partially supported.
-    user_warning: str | None = None
+    user_warning: Optional[str] = None
 
     # Whether this implementation performs requests to external services
     # during initialization. We use this to minimize the execution time.
