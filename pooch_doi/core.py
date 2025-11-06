@@ -15,7 +15,7 @@ except ImportError:
 
 from pooch import Pooch, retrieve
 from .repository import doi_to_repository
-from .utils import parse_doi
+from .utils import parse_doi, assert_valid_doi
 
 
 class DOIPooch(Pooch):
@@ -31,13 +31,14 @@ class DOIPooch(Pooch):
     @override
     def fetch(self, fname, processor=None, downloader=None, progressbar=False):
         # TODO: fetch file. see `Pooch.fetch`
+        # TODO: resolve DOI, use HTTPSDownloader, cache data repositori
         pass
 
     @override
     def load_registry_from_doi(self):
         # Create a repository instance
-        doi_netloc, _ = parse_doi(self.base_url)
-        data_repository = doi_to_repository(doi_netloc)
+        assert_valid_doi(self.base_url)
+        data_repository = doi_to_repository(self.base_url)
 
         # Call registry population for this repository
         data_repository.populate_registry(self)
@@ -54,23 +55,23 @@ class DOIPooch(Pooch):
 def retrieve_from_doi(
     doi: str,
     known_hash: Optional[str] = None,
-    fname: Optional[str] = None,
+    filename: Optional[str] = None,
     path=None,
     processor=None,
     downloader=None,
     progressbar: bool = False,
 ) -> str:
     # Resolve DOI
-    doi_netloc, doi_path = parse_doi(doi)
-    data_repository = doi_to_repository(doi_netloc)
+    assert_valid_doi(doi)
+    data_repository = doi_to_repository(doi)
 
-    # Remove the leading slash in the path and
-    # resolve the download URL
-    if doi_path[0] == "/":
-        doi_path = doi_path[1:]
-    download_url = data_repository.download_url(doi_path)
+    # Resolve the download URL
+    download_url = data_repository.download_url(doi)
 
+    # TODO: known_hash should never be None
+    # known_hash = data_repository.populate_registry(reg)
+    
     # Retrieve actual data file(s)
     return retrieve(
-        download_url, known_hash, fname, path, processor, downloader, progressbar
+        download_url, known_hash, filename, path, processor, downloader, progressbar
     )

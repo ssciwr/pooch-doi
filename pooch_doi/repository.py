@@ -50,11 +50,6 @@ def doi_to_repository(doi):
         The data repository object
     """
 
-    # TODO: we could remove this as nobody calls this method with trailing slash,
-    #       but maybe it's good-to-have anyways.
-    if doi[-1] == "/":
-        doi = doi[:-1]
-
     # TODO: use importlib.metadata.entry_points to discover all registered data repositories
     repositories = []
 
@@ -100,6 +95,8 @@ def doi_to_repository(doi):
 
 
 class DataRepository:  # pylint: disable=too-few-public-methods, missing-class-docstring
+    # TODO: add allowed_exceptions 
+
     # A URL for an issue tracker for this implementation
     issue_tracker: Optional[str] = None
 
