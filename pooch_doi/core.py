@@ -54,8 +54,8 @@ class DOIPooch(Pooch):
 
 def retrieve_from_doi(
     doi: str,
+    filename: str,
     known_hash: Optional[str] = None,
-    filename: Optional[str] = None,
     path=None,
     processor=None,
     downloader=None,
@@ -65,12 +65,18 @@ def retrieve_from_doi(
     assert_valid_doi(doi)
     data_repository = doi_to_repository(doi)
 
+    # TODO: THIS IS JUST A WORKAROUND!
+    #       Please refactor pooch to use a dedicated registry class and interface.
+    #       Then refactor this code here to use it.
+    dummy_pooch = Pooch("", "")
+    data_repository.populate_registry(dummy_pooch)
+    if filename not in dummy_pooch.registry:
+        raise ValueError(f"File '{filename}' not found in registry.")
+    known_hash = known_hash or dummy_pooch.registry[filename]
+
     # Resolve the download URL
     download_url = data_repository.download_url(doi)
 
-    # TODO: known_hash should never be None
-    # known_hash = data_repository.populate_registry(reg)
-    
     # Retrieve actual data file(s)
     return retrieve(
         download_url, known_hash, filename, path, processor, downloader, progressbar
