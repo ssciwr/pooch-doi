@@ -21,9 +21,16 @@ def get_logger() -> logging.Logger:
     """
     return LOGGER
 
-# TODO: implement validation throw exception if doi is not valid
+
+def is_valid_doi(doi: str) -> bool:
+    # TODO: implement this validation logic
+    return True
+
+
 def assert_valid_doi(doi: str):
-    return
+    if not is_valid_doi(doi):
+        raise ValueError(f"Invalid DOI: {doi!s}")
+
 
 def parse_doi(doi: str) -> Tuple[str, str]:
     if doi.startswith("doi://"):
