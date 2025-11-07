@@ -15,6 +15,10 @@ _INVALID_DOIS = (
 def test_is_valid_doi():
     for doi in _VALID_DOIS:
         assert utils.is_valid_doi(doi) is True
+
+
+@pytest.mark.unit
+def test_is_invalid_doi():
     for doi in _INVALID_DOIS:
         assert utils.is_valid_doi(doi) is False
 
@@ -23,6 +27,7 @@ def test_is_valid_doi():
 def test_assert_valid_doi():
     for doi in _VALID_DOIS:
         utils.assert_valid_doi(doi)
+
 
 @pytest.mark.unit
 def test_assert_invalid_doi():
