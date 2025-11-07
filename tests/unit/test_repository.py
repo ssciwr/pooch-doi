@@ -1,6 +1,6 @@
 import pytest
 
-from pooch_doi.repository import doi_to_url
+from pooch_doi.repository import DataRepository, doi_to_url, _get_all_available_data_repositories
 
 _VALID_DOIS_TO_URL = (
     ("10.5281/zenodo.17544720", "https://zenodo.org/doi/10.5281/zenodo.17544720", 200),
@@ -26,3 +26,22 @@ def test_invalid_doi_to_url(doi_mock):
         with doi_mock(doi, archive_url, status_code=status_code):
             with pytest.raises(ValueError):
                 doi_to_url(doi)
+
+
+class RequestInInitDataRepository(DataRepository):
+    init_requires_request = True
+class NoRequestInInitDataRepository(DataRepository):
+    init_requires_request = False
+
+
+def test_get_all_available_data_repositories(make_repos_available):
+    d1 = RequestInInitDataRepository()
+    d2 = NoRequestInInitDataRepository()
+    with make_repos_available(d1,d2):
+        assert _get_all_available_data_repositories() == [d2,d1]
+
+    with make_repos_available(d2,d1):
+        assert _get_all_available_data_repositories() == [d2,d1]
+
+    with make_repos_available():
+        assert _get_all_available_data_repositories() == []
