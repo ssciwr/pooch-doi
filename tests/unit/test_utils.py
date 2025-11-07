@@ -23,6 +23,9 @@ def test_is_valid_doi():
 def test_assert_valid_doi():
     for doi in _VALID_DOIS:
         utils.assert_valid_doi(doi)
+
+@pytest.mark.unit
+def test_assert_invalid_doi():
     for doi in _INVALID_DOIS:
         with pytest.raises(ValueError):
             utils.assert_valid_doi(doi)
