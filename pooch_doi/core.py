@@ -40,8 +40,8 @@ class DOIPooch(Pooch):
         assert_valid_doi(self.base_url)
         data_repository = doi_to_repository(self.base_url)
 
-        # Call registry population for this repository
-        data_repository.populate_registry(self)
+        # Update registry for this repository
+        self.registry = data_repository.create_registry()
 
     @override
     def is_available(self, fname, downloader=None):
@@ -54,8 +54,8 @@ class DOIPooch(Pooch):
 
 def retrieve_from_doi(
     doi: str,
+    filename: str,
     known_hash: Optional[str] = None,
-    filename: Optional[str] = None,
     path=None,
     processor=None,
     downloader=None,
@@ -65,12 +65,16 @@ def retrieve_from_doi(
     assert_valid_doi(doi)
     data_repository = doi_to_repository(doi)
 
+    # use file-hash from registry if no known_hash is provided
+    if known_hash is None:
+        registry = data_repository.create_registry()
+        if filename not in registry:
+            raise ValueError(f"File '{filename}' not found in registry.")
+        known_hash = registry[filename]
+
     # Resolve the download URL
     download_url = data_repository.download_url(doi)
 
-    # TODO: known_hash should never be None
-    # known_hash = data_repository.populate_registry(reg)
-    
     # Retrieve actual data file(s)
     return retrieve(
         download_url, known_hash, filename, path, processor, downloader, progressbar
