@@ -35,6 +35,7 @@ dependencies = [
 tests = [
     "pytest",
     "pytest-cov",
+    "requests-mock",
 ]
 docs = [
     "sphinx",
