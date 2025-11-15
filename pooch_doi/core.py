@@ -72,6 +72,8 @@ def retrieve_from_doi(
     # known_hash = data_repository.populate_registry(reg)
     
     # Retrieve actual data file(s)
+    # Todo: Patch this function for test purpose
+  
     return retrieve(
         download_url, known_hash, filename, path, processor, downloader, progressbar
     )
