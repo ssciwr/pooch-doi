@@ -38,7 +38,7 @@ def _get_all_available_data_repositories():
         ep.load() for ep in importlib.metadata.entry_points(group="data_repositories")
     ]
     # Prioritize repositories that don't make a request in `initialize`.
-    repositories.sort(key=lambda repo: int(repo.init_requires_request))
+    repositories.sort(key=lambda repo: int(repo.init_requires_requests))
     return repositories
 
 
