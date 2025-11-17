@@ -1,7 +1,8 @@
-from typing import Tuple
+from typing import Tuple, Callable
 import pytest
 import requests_mock
 from unittest.mock import MagicMock, patch
+from urllib.parse import urlsplit
 
 from pooch_doi import DataRepository
 
@@ -27,8 +28,8 @@ class _DataRepoManager:
         self._patch()
         return _DataRepoManager._PatchContext(self)
 
-    def make_available(self, *repos):
-        self._patch(*repos)
+    def make_available(self, first_repo, *additional_repos):
+        self._patch(first_repo, *additional_repos)
         return _DataRepoManager._PatchContext(self)
 
     def _patch(self, *repos):
@@ -51,15 +52,35 @@ def data_repo_manager():
 
 
 class _DataRepoFactory:
+    # This class is used to provide a default implementation for all methods in `DataRepository`
+    # that would otherwise throw an error.
+    class _BaseImplDataRepository(DataRepository):
+        @property
+        def name(self):
+            return "BaseImplDataRepository"
+        @property
+        def homepage(self):
+            return "homepage"
+        def download_url(self, file_name):
+            return "download_url"
+        def populate_registry(self, pooch):
+            return None
+
     def __init__(self):
         self.dict = dict()
+        self.base = DataRepository
+        self._provide_method_factories()
 
-    def _with_attribute(self, attribute, value) -> "_DataRepoFactory":
+    def _with_attribute(self, attribute: str, value) -> "_DataRepoFactory":
         self.dict[attribute] = value
         return self
 
-    # def with_static_attributes(self, issue_tracker: Optional[str] = None, allows_self_hosting: Optional[bool] = None, full_support: Optional[bool] = None, user_warning: Optional[str] = None, init_requires_requests: Optional[bool] = None) -> "_DataRepoFactory":
-    #     self._with_attribute("issue_tracker", issue_tracker)
+    def with_base_impl(self) -> "_DataRepoFactory":
+        self.base = _DataRepoFactory._BaseImplDataRepository
+        return self
+
+    # ================================================================
+    # Class attribute setters
 
     def with_issue_tracker(self, issue_tracker: str) -> "_DataRepoFactory":
         return self._with_attribute("issue_tracker", issue_tracker)
@@ -76,23 +97,65 @@ class _DataRepoFactory:
     def with_init_requires_requests(self, init_requires_requests: bool) -> "_DataRepoFactory":
         return self._with_attribute("init_requires_requests", init_requires_requests)
 
-    def with_name(self):
-        pass
+    # ================================================================
+    # Class method factories
 
-    def with_homepage(self):
-        pass
+    # This Base class should be the last in MRO, in order for the mixins to work properly!
+    class _BaseMethodFactory:
+        _method_name: str = "<method>"
+        _decorator = None
 
-    def with_initialize(self):
-        pass
+        def __init__(self, repo_factory: "_DataRepoFactory") -> None:
+            self._repo_factory = repo_factory
 
-    def with_download_url(self):
-        pass
+        def _set(self, func: Callable) -> "_DataRepoFactory":
+            if self._decorator is not None:
+                func = self._decorator(func)
+            return self._repo_factory._with_attribute(self._method_name, func)
 
-    def with_populate_registry(self):
-        pass
+    class _FuncStrategyMixin:
+        def func(self, func: Callable) -> "_DataRepoFactory":
+            return super()._set(func)
+
+    class _ReturnValueStrategyMixin:
+        def return_value(self, value) -> "_DataRepoFactory":
+            return super()._set(lambda *args,**kwargs: value)
+
+    class _NameMethod(_FuncStrategyMixin, _ReturnValueStrategyMixin, _BaseMethodFactory):
+        _method_name = "name"
+        _decorator = property
+
+    class _HomepageMethod(_FuncStrategyMixin, _ReturnValueStrategyMixin, _BaseMethodFactory):
+        _method_name = "homepage"
+        _decorator = property
+
+    class _InitializeMethod(_FuncStrategyMixin, _ReturnValueStrategyMixin, _BaseMethodFactory):
+        _method_name = "initialize"
+        _decorator = classmethod
+
+        def match_domain(self, domain: str) -> "_DataRepoFactory":
+            def _initialize_match_domain(cls, doi, archive_url):
+                return cls() if urlsplit(archive_url).netloc == domain else None
+            return self._set(_initialize_match_domain)
+
+    class _DownloadURLMethod(_FuncStrategyMixin, _ReturnValueStrategyMixin, _BaseMethodFactory):
+        _method_name = "download_url"
+
+    class _PopulateRegistryMethod(_FuncStrategyMixin, _BaseMethodFactory):
+        _method_name = "populate_registry"
+
+    def _provide_method_factories(self):
+        self.with_name = _DataRepoFactory._NameMethod(self)
+        self.with_homepage = _DataRepoFactory._HomepageMethod(self)
+        self.with_initialize = _DataRepoFactory._InitializeMethod(self)
+        self.with_download_url = _DataRepoFactory._DownloadURLMethod(self)
+        self.with_populate_registry = _DataRepoFactory._PopulateRegistryMethod(self)
+
+    # ================================================================
+    # Class creation methods
 
     def create_type(self) -> type:
-        return type("FakeDataRepository", (DataRepository,), self.dict)
+        return type("FakeDataRepository", (self.base,), self.dict)
 
     def create_instance(self) -> type[DataRepository]:
         return self.create_type()()
