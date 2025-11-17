@@ -121,15 +121,21 @@ class _DataRepoFactory:
         def return_value(self, value) -> "_DataRepoFactory":
             return super()._set(lambda *args,**kwargs: value)
 
-    class _NameMethod(_FuncStrategyMixin, _ReturnValueStrategyMixin, _BaseMethodFactory):
+    class _RaiseExceptionStrategyMixin:
+        def raise_exception(self, exc: Exception):
+            def _func(*args,**kwargs):
+                raise exc
+            return super()._set(_func)
+
+    class _NameMethod(_FuncStrategyMixin, _ReturnValueStrategyMixin, _RaiseExceptionStrategyMixin, _BaseMethodFactory):
         _method_name = "name"
         _decorator = property
 
-    class _HomepageMethod(_FuncStrategyMixin, _ReturnValueStrategyMixin, _BaseMethodFactory):
+    class _HomepageMethod(_FuncStrategyMixin, _ReturnValueStrategyMixin, _RaiseExceptionStrategyMixin, _BaseMethodFactory):
         _method_name = "homepage"
         _decorator = property
 
-    class _InitializeMethod(_FuncStrategyMixin, _ReturnValueStrategyMixin, _BaseMethodFactory):
+    class _InitializeMethod(_FuncStrategyMixin, _ReturnValueStrategyMixin, _RaiseExceptionStrategyMixin, _BaseMethodFactory):
         _method_name = "initialize"
         _decorator = classmethod
 
@@ -138,10 +144,10 @@ class _DataRepoFactory:
                 return cls() if urlsplit(archive_url).netloc == domain else None
             return self._set(_initialize_match_domain)
 
-    class _DownloadURLMethod(_FuncStrategyMixin, _ReturnValueStrategyMixin, _BaseMethodFactory):
+    class _DownloadURLMethod(_FuncStrategyMixin, _ReturnValueStrategyMixin, _RaiseExceptionStrategyMixin, _BaseMethodFactory):
         _method_name = "download_url"
 
-    class _PopulateRegistryMethod(_FuncStrategyMixin, _BaseMethodFactory):
+    class _PopulateRegistryMethod(_FuncStrategyMixin, _RaiseExceptionStrategyMixin, _BaseMethodFactory):
         _method_name = "populate_registry"
 
     def _provide_method_factories(self):
