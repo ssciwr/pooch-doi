@@ -28,8 +28,8 @@ class _DataRepoManager:
         self._patch()
         return _DataRepoManager._PatchContext(self)
 
-    def make_available(self, *repos):
-        self._patch(*repos)
+    def make_available(self, first_repo, *additional_repos):
+        self._patch(first_repo, *additional_repos)
         return _DataRepoManager._PatchContext(self)
 
     def _patch(self, *repos):
