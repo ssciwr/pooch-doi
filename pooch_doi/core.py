@@ -62,7 +62,6 @@ def retrieve_from_doi(
     progressbar: bool = False,
 ) -> str:
     # Resolve DOI
-    print("In retrieve from doi methode")
     assert_valid_doi(doi)
     data_repository = doi_to_repository(doi)
 
@@ -74,7 +73,6 @@ def retrieve_from_doi(
     
     # Retrieve actual data file(s)
     # Todo: Patch this function for test purpose
-    print(download_url)
     return retrieve(
         download_url, known_hash, filename, path, processor, downloader, progressbar
     )
