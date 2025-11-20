@@ -116,6 +116,7 @@ def test_retrieve_from_doi_without_hash(
     d1 = data_repo_factory().with_base_impl()
     d1 = d1.with_download_url.return_value(url)
     d1 = d1.with_initialize.match_domain("zenodo.org")
+    d1 = d1.with_create_registry.return_value({"result_values": "hash"})
     d1 = d1.create_instance()
     data_repo_manager.make_available(d1)
 
@@ -128,7 +129,6 @@ def test_retrieve_from_doi_without_hash(
         downloader=None,
         progressbar=False,
     )
-    # TODO: how do we get the hash out of the dictionary? Populate_Reg should be replaced
     mock_retrieve.assert_called_once_with(
-        url, d1.populate_registry(), "result_values", None, None, None, False
+        url, "hash", "result_values", None, None, None, False
     )
