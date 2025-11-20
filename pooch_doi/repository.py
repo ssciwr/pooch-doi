@@ -1,5 +1,5 @@
 import importlib.metadata
-from typing import Optional
+from typing import Optional, Dict
 from .utils import get_logger
 
 DEFAULT_TIMEOUT = 30
@@ -179,14 +179,14 @@ class DataRepository:  # pylint: disable=too-few-public-methods, missing-class-d
 
         raise NotImplementedError  # pragma: no cover
 
-    def populate_registry(self, pooch):
+    def create_registry(self) -> Dict[str, str]:
         """
-        Populate the registry using the data repository's API
+        Create a registry dictionary using the data repository's API
 
-        Parameters
+        Returns
         ----------
-        pooch : Pooch
-            The pooch instance that the registry will be added to.
+        registry : Dict[str,str]
+            The registry dictionary.
         """
-
+        # TODO: maybe add some mechanism to cache registry
         raise NotImplementedError  # pragma: no cover
