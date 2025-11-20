@@ -34,7 +34,7 @@ class _DataRepoManager:
 
     def _patch(self, *repos):
         self.entries = [MagicMock() for _ in repos]
-        for e,r in zip(self.entries,repos):
+        for e, r in zip(self.entries, repos):
             e.load.return_value = r
 
         mock = self.patcher.start()
@@ -43,12 +43,14 @@ class _DataRepoManager:
     def _unpatch(self):
         self.patcher.stop()
 
+
 _DATA_REPO_MANAGER = _DataRepoManager()
+
 
 @pytest.fixture
 def data_repo_manager():
     yield _DATA_REPO_MANAGER
-    _DATA_REPO_MANAGER._unpatch() # pylint: disable=protected-access
+    _DATA_REPO_MANAGER._unpatch()  # pylint: disable=protected-access
 
 
 class _DataRepoFactory:
@@ -58,13 +60,16 @@ class _DataRepoFactory:
         @property
         def name(self):
             return "BaseImplDataRepository"
+
         @property
         def homepage(self):
             return "homepage"
+
         def download_url(self, file_name):
             return "download_url"
-        def populate_registry(self, pooch):
-            return None
+
+        def create_registry(self):
+            return {}
 
     def __init__(self):
         self.dict = dict()
@@ -94,7 +99,9 @@ class _DataRepoFactory:
     def with_user_warning(self, user_warning: str) -> "_DataRepoFactory":
         return self._with_attribute("user_warning", user_warning)
 
-    def with_init_requires_requests(self, init_requires_requests: bool) -> "_DataRepoFactory":
+    def with_init_requires_requests(
+        self, init_requires_requests: bool
+    ) -> "_DataRepoFactory":
         return self._with_attribute("init_requires_requests", init_requires_requests)
 
     # ================================================================
@@ -119,43 +126,70 @@ class _DataRepoFactory:
 
     class _ReturnValueStrategyMixin:
         def return_value(self, value) -> "_DataRepoFactory":
-            return super()._set(lambda *args,**kwargs: value)
+            return super()._set(lambda *args, **kwargs: value)
 
     class _RaiseExceptionStrategyMixin:
         def raise_exception(self, exc: Exception):
-            def _func(*args,**kwargs):
+            def _func(*args, **kwargs):
                 raise exc
+
             return super()._set(_func)
 
-    class _NameMethod(_FuncStrategyMixin, _ReturnValueStrategyMixin, _RaiseExceptionStrategyMixin, _BaseMethodFactory):
+    class _NameMethod(
+        _FuncStrategyMixin,
+        _ReturnValueStrategyMixin,
+        _RaiseExceptionStrategyMixin,
+        _BaseMethodFactory,
+    ):
         _method_name = "name"
         _decorator = property
 
-    class _HomepageMethod(_FuncStrategyMixin, _ReturnValueStrategyMixin, _RaiseExceptionStrategyMixin, _BaseMethodFactory):
+    class _HomepageMethod(
+        _FuncStrategyMixin,
+        _ReturnValueStrategyMixin,
+        _RaiseExceptionStrategyMixin,
+        _BaseMethodFactory,
+    ):
         _method_name = "homepage"
         _decorator = property
 
-    class _InitializeMethod(_FuncStrategyMixin, _ReturnValueStrategyMixin, _RaiseExceptionStrategyMixin, _BaseMethodFactory):
+    class _InitializeMethod(
+        _FuncStrategyMixin,
+        _ReturnValueStrategyMixin,
+        _RaiseExceptionStrategyMixin,
+        _BaseMethodFactory,
+    ):
         _method_name = "initialize"
         _decorator = classmethod
 
         def match_domain(self, domain: str) -> "_DataRepoFactory":
             def _initialize_match_domain(cls, doi, archive_url):
                 return cls() if urlsplit(archive_url).netloc == domain else None
+
             return self._set(_initialize_match_domain)
 
-    class _DownloadURLMethod(_FuncStrategyMixin, _ReturnValueStrategyMixin, _RaiseExceptionStrategyMixin, _BaseMethodFactory):
+    class _DownloadURLMethod(
+        _FuncStrategyMixin,
+        _ReturnValueStrategyMixin,
+        _RaiseExceptionStrategyMixin,
+        _BaseMethodFactory,
+    ):
         _method_name = "download_url"
 
-    class _PopulateRegistryMethod(_FuncStrategyMixin, _RaiseExceptionStrategyMixin, _BaseMethodFactory):
-        _method_name = "populate_registry"
+    class _CreateRegistryMethod(
+        _FuncStrategyMixin,
+        _ReturnValueStrategyMixin,
+        _RaiseExceptionStrategyMixin,
+        _BaseMethodFactory,
+    ):
+        _method_name = "create_registry"
 
     def _provide_method_factories(self):
         self.with_name = _DataRepoFactory._NameMethod(self)
         self.with_homepage = _DataRepoFactory._HomepageMethod(self)
         self.with_initialize = _DataRepoFactory._InitializeMethod(self)
         self.with_download_url = _DataRepoFactory._DownloadURLMethod(self)
-        self.with_populate_registry = _DataRepoFactory._PopulateRegistryMethod(self)
+        self.with_create_registry = _DataRepoFactory._CreateRegistryMethod(self)
 
     # ================================================================
     # Class creation methods
@@ -166,10 +200,12 @@ class _DataRepoFactory:
     def create_instance(self) -> type[DataRepository]:
         return self.create_type()()
 
+
 @pytest.fixture
 def data_repo_factory():
     def new_data_repo_factory() -> _DataRepoFactory:
         return _DataRepoFactory()
+
     return new_data_repo_factory
 
 
@@ -177,11 +213,13 @@ class _DoiResolver:
     def __init__(self):
         self.m = requests_mock.Mocker()
 
-    def __call__(self, doi: str, archive_url: str, status_code: int=200):
+    def __call__(self, doi: str, archive_url: str, status_code: int = 200):
         self.m.start()
         # patch request to doi.org and the resolved URL,
         # because doi_to_url does follow redirects.
-        self.m.get(f"https://doi.org/{doi}", status_code=302, headers={"Location": archive_url})
+        self.m.get(
+            f"https://doi.org/{doi}", status_code=302, headers={"Location": archive_url}
+        )
         self.m.get(archive_url, status_code=status_code)
         return self
 
@@ -195,32 +233,38 @@ class _DoiResolver:
         self.m.reset()
         self.m.stop()
 
+
 _DOI_RESOLVER = _DoiResolver()
+
 
 @pytest.fixture
 def make_doi_resolve_to():
     yield _DOI_RESOLVER
-    _DOI_RESOLVER._stop() # pylint: disable=protected-access
-
+    _DOI_RESOLVER._stop()  # pylint: disable=protected-access
 
 
 _VALID_DOI_TO_URL_PAIRS = (
     ("10.5281/zenodo.17544720", "https://zenodo.org/doi/10.5281/zenodo.17544720"),
-    ("10.6084/m9.figshare.30511304", "https://figshare.com/articles/dataset/ab/30511304"),
+    (
+        "10.6084/m9.figshare.30511304",
+        "https://figshare.com/articles/dataset/ab/30511304",
+    ),
 )
 _INVALID_DOI_TO_URL_PAIRS = (
     ("11.5281/zenodo.17544720", "https://zenodo.org/doi/11.5281/zenodo.17544720"),
     ("10.60/m9.figshare.30511304", "https://figshare.com/articles/dataset/ab/30511304"),
 )
-_VALID_DOIS = tuple(doi for doi,_ in _VALID_DOI_TO_URL_PAIRS)
-_INVALID_DOIS = tuple(doi for doi,_ in _INVALID_DOI_TO_URL_PAIRS)
+_VALID_DOIS = tuple(doi for doi, _ in _VALID_DOI_TO_URL_PAIRS)
+_INVALID_DOIS = tuple(doi for doi, _ in _INVALID_DOI_TO_URL_PAIRS)
+
+
 class _Dois:
     @staticmethod
-    def all_valid_dois() -> Tuple[str,...]:
+    def all_valid_dois() -> Tuple[str, ...]:
         return _VALID_DOIS
 
     @staticmethod
-    def all_invalid_dois() -> Tuple[str,...]:
+    def all_invalid_dois() -> Tuple[str, ...]:
         return _INVALID_DOIS
 
     @staticmethod
@@ -240,11 +284,11 @@ class _Dois:
         return _Dois.n_invalid_dois(1)[0]
 
     @staticmethod
-    def all_valid_doi_to_url_pairs() -> Tuple[Tuple[str,str],...]:
+    def all_valid_doi_to_url_pairs() -> Tuple[Tuple[str, str], ...]:
         return _VALID_DOI_TO_URL_PAIRS
 
     @staticmethod
-    def all_invalid_doi_to_url_pairs() -> Tuple[Tuple[str,str],...]:
+    def all_invalid_doi_to_url_pairs() -> Tuple[Tuple[str, str], ...]:
         return _INVALID_DOI_TO_URL_PAIRS
 
     @staticmethod
