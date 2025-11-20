@@ -24,6 +24,7 @@ def get_logger() -> logging.Logger:
 
 def is_valid_doi(doi: str) -> bool:
     # TODO: implement this validation logic
+    # /(10[.][0-9]{4,}[^\s"\/<>]*\/[^\s"<>]+)/ we found this as regular expression
     return True
 
 

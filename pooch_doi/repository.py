@@ -1,3 +1,4 @@
+import importlib.metadata
 from typing import Optional, Dict
 from .utils import get_logger
 
@@ -32,6 +33,15 @@ def doi_to_url(doi):
     return url
 
 
+def _get_all_available_data_repositories():
+    repositories = [
+        ep.load() for ep in importlib.metadata.entry_points(group="data_repositories")
+    ]
+    # Prioritize repositories that don't make a request in `initialize`.
+    repositories.sort(key=lambda repo: int(repo.init_requires_requests))
+    return repositories
+
+
 def doi_to_repository(doi):
     """
     Instantiate a data repository instance from a given DOI.
@@ -50,8 +60,7 @@ def doi_to_repository(doi):
         The data repository object
     """
 
-    # TODO: use importlib.metadata.entry_points to discover all registered data repositories
-    repositories = []
+    repositories = _get_all_available_data_repositories()
 
     # Extract the DOI and the repository information
     archive_url = doi_to_url(doi)
@@ -95,7 +104,7 @@ def doi_to_repository(doi):
 
 
 class DataRepository:  # pylint: disable=too-few-public-methods, missing-class-docstring
-    # TODO: add allowed_exceptions 
+    # TODO: add allowed_exceptions
 
     # A URL for an issue tracker for this implementation
     issue_tracker: Optional[str] = None
