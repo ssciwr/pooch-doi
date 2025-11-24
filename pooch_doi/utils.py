@@ -1,5 +1,6 @@
 from typing import Tuple
 import logging
+import re
 
 
 LOGGER = logging.Logger("pooch-doi")
@@ -23,8 +24,20 @@ def get_logger() -> logging.Logger:
 
 
 def is_valid_doi(doi: str) -> bool:
-    # TODO: implement this validation logic
-    return True
+    # We will valid the dois by following the regular expression: /(10[.][0-9]{4,}[^\s"\/<>]*\/[^\s"<>]+)/
+    # small interpretation for later adjustements:
+    # 10[.][0-9]{4,} -> a "10" followed by "." followed by at least 4 Numbers between 0 and 9 
+    # Example: 10.3456
+    # [^\s"\/<>]* -> Match any character except of: “\s” -> all whitespace elements ,""" -> ",
+    # "\/" -> /,"<“,">" zero or more times.
+    # \/[^\s"<>]+ -> a "/" followed by any characters except of: “\s” -> all whitespace elements,
+    # """ -> ", "<“, ">" one or more times.
+    validdoi = doi
+    validdoi = re.search("(10[.][0-9]{4,}[^\s\"\/<>]*\/[^\s\"<>]+)",doi)
+    if validdoi is None:
+        return False
+    else:
+        return True
 
 
 def assert_valid_doi(doi: str):
