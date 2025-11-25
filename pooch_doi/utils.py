@@ -23,13 +23,16 @@ def get_logger() -> logging.Logger:
     return LOGGER
 
 
+_DOI_REGEX_PATTERN = re.compile(r"(10[.][0-9]{2,}(?:[.][0-9]+)*/.+)")
+
+
 def is_valid_doi(doi: str) -> bool:
     # TODO: Find proper doi regex -> for code review
 
     # we get the doi prefix from here: https://github.com/regexhq/doi-regex/
     # we only check the prefix, because the convention isn't very clear on that
-    validdoi = re.search(r"(10[.][0-9]{2,}(?:[.][0-9]+)*/.+)", doi) 
-    if validdoi is None:
+    m = _DOI_REGEX_PATTERN.match(doi)
+    if m is None:
         return False
     else:
         return True
