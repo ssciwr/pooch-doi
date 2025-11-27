@@ -1,5 +1,6 @@
 import functools
 from typing import Optional
+from functools import cached_property
 
 try:
     from typing import override
@@ -21,18 +22,24 @@ from .utils import parse_doi, assert_valid_doi
 class DOIPooch(Pooch):
     def __init__(self, path: str, doi: str, **kwargs):
         populate_registry = kwargs.pop("populate_registry", False)
+        self.doi = doi
         super().__init__(path, doi, **kwargs)
 
         # TODO: maybe ensure doi is no other protocol
 
         if populate_registry:
             self.load_registry_from_doi()
+    
+    @cached_property
+    def data_repository(self):
+        assert_valid_doi(self.doi)
+        return doi_to_repository(self.doi)
 
-    @override
-    def fetch(self, fname, processor=None, downloader=None, progressbar=False):
-        # TODO: fetch file. see `Pooch.fetch`
-        # TODO: resolve DOI, use HTTPSDownloader, cache data repositori
-        pass
+    def download_url(self, fname):
+        return self.data_repository.download_url(fname)
+    
+    def get_url(self, fname):
+        return self.download_url(fname)
 
     @override
     def load_registry_from_doi(self):
@@ -42,15 +49,6 @@ class DOIPooch(Pooch):
 
         # Update registry for this repository
         self.registry = data_repository.create_registry()
-
-    @override
-    def is_available(self, fname, downloader=None):
-        self._assert_file_in_registry(fname)
-        # We stay aligned with the current implementation of pooch which
-        # does not support availability checks for DOIDownloader
-        # TODO: this could potentially be improved by using the availability feature of HTTPDownloader
-        raise NotImplementedError("DOIPooch does not support availability checks.")
-
 
 def retrieve_from_doi(
     doi: str,
@@ -73,7 +71,7 @@ def retrieve_from_doi(
         known_hash = registry[filename]
 
     # Resolve the download URL
-    download_url = data_repository.download_url(doi)
+    download_url = data_repository.download_url(filename)
 
     # Retrieve actual data file(s)
     # Todo: Patch this function for test purpose
