@@ -35,6 +35,7 @@ dependencies = [
 tests = [
     "pytest",
     "pytest-cov",
+    "pytest-mock",
     "requests-mock",
 ]
 docs = [
