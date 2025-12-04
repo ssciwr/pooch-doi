@@ -1,6 +1,7 @@
 import importlib.metadata
-from typing import Optional, Dict
+from typing import Optional, Dict, List
 from .utils import get_logger
+from .license import License
 
 DEFAULT_TIMEOUT = 30
 
@@ -160,6 +161,19 @@ class DataRepository:  # pylint: disable=too-few-public-methods, missing-class-d
         """
 
         return None  # pragma: no cover
+
+    def licenses(self) -> List[License]:
+        """
+        Use the repository API to get a list of licenses used in
+        this repository.
+
+        Returns
+        ----------
+        licenses : List[License]
+            The list of licenses.
+        -------
+        """
+        raise NotImplementedError
 
     def download_url(self, file_name):
         """
