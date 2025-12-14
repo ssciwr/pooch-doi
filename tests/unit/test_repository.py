@@ -2,6 +2,7 @@ import pytest
 
 from pooch_doi.repository import (
     doi_to_url,
+    doi_to_repository,
     _get_all_available_data_repositories,
 )
 
@@ -39,6 +40,28 @@ def test_get_all_available_data_repositories(data_repo_manager, data_repo_factor
     with data_repo_manager.make_none_available():
         assert _get_all_available_data_repositories() == []
 
+def test_doi_to_repository_with_supported_repository(data_repo_manager, data_repo_factory, make_doi_resolve_to):
+    doi = "zenodo/abc"
+    
+    # mock everything needed
+    d1 = data_repo_factory().with_base_impl()
+    d1 = d1.with_initialize.match_domain("zenodo.org")
+    t = d1.create_type()
+    data_repo_manager.make_available(t)
+    make_doi_resolve_to(doi, "https://zenodo.org/records/abc", status_code=200)
+    
+    assert isinstance(doi_to_repository(doi), t)
 
-def test_doi_to_repository():
-    pass
+def test_doi_to_repository_without_supported_repository(data_repo_manager, data_repo_factory, dois): 
+    # mock everything needed
+    # Todo: ensure repositorz is not supported, ValueError can be more specified
+    with pytest.raises(ValueError): 
+        doi_to_repository(dois.one_invalid_doi)
+    
+
+def test_doi_to_repository_with_invalid_doi_and_supported_repository(data_repo_manager, data_repo_factory, dois): 
+    # mock everything needed
+    # Todo: ensure repositorz is supported
+    with pytest.raises(ValueError):
+        doi_to_repository(dois.one_invalid_doi)
+
