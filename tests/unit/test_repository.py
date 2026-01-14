@@ -24,8 +24,8 @@ def test_doi_to_url_failed_resolution(status_code, dois, make_doi_resolve_to):
 
 
 def test_get_all_available_data_repositories(data_repo_manager, data_repo_factory):
-    d1 = data_repo_factory().with_init_requires_requests(True).create_instance()
-    d2 = data_repo_factory().with_init_requires_requests(False).create_instance()
+    d1 = data_repo_factory().with_init_requires_requests(True).create_type()
+    d2 = data_repo_factory().with_init_requires_requests(False).create_type()
 
     with data_repo_manager.make_available(d1, d2):
         assert _get_all_available_data_repositories() == [d2, d1]

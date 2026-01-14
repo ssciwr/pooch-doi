@@ -64,6 +64,13 @@ class _DataRepoFactory:
         def homepage(self):
             return "homepage"
 
+        @classmethod
+        def initialize(cls, doi, archive_url):
+            return None
+
+        def licenses(self):
+            return []
+
         def download_url(self, file_name):
             return "download_url"
 
@@ -72,15 +79,11 @@ class _DataRepoFactory:
 
     def __init__(self):
         self.dict = dict()
-        self.base = DataRepository
+        self.base = _DataRepoFactory._BaseImplDataRepository
         self._provide_method_factories()
 
     def _with_attribute(self, attribute: str, value) -> "_DataRepoFactory":
         self.dict[attribute] = value
-        return self
-
-    def with_base_impl(self) -> "_DataRepoFactory":
-        self.base = _DataRepoFactory._BaseImplDataRepository
         return self
 
     # ================================================================
