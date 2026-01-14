@@ -1,6 +1,5 @@
 from typing import Tuple, Callable
 import pytest
-import requests_mock
 from unittest.mock import MagicMock, patch
 from urllib.parse import urlsplit
 
@@ -209,45 +208,8 @@ def data_repo_factory():
     return new_data_repo_factory
 
 
-class _DoiResolver:
-    def __init__(self):
-        self.m = requests_mock.Mocker()
-
-    def __call__(self, doi: str, archive_url: str, status_code: int = 200):
-        self.m.start()
-        # patch request to doi.org and the resolved URL,
-        # because doi_to_url does follow redirects.
-        self.m.get(
-            f"https://doi.org/{doi}", status_code=302, headers={"Location": archive_url}
-        )
-        self.m.get(archive_url, status_code=status_code)
-        return self
-
-    def __enter__(self):
-        pass
-
-    def __exit__(self, type, value, traceback):
-        self._stop()
-
-    def _stop(self):
-        self.m.reset()
-        self.m.stop()
-
-
-_DOI_RESOLVER = _DoiResolver()
-
-
-@pytest.fixture
-def make_doi_resolve_to():
-    yield _DOI_RESOLVER
-    _DOI_RESOLVER._stop()  # pylint: disable=protected-access
-
-
 _VALID_DOI_TO_URL_PAIRS = (
-    (
-        "10.5281/zenodo.17544720", 
-        "https://zenodo.org/doi/10.5281/zenodo.17544720"
-    ),
+    ("10.5281/zenodo.17544720", "https://zenodo.org/doi/10.5281/zenodo.17544720"),
     (
         "10.6084/m9.figshare.30511304",
         "https://figshare.com/articles/dataset/ab/30511304",
@@ -272,31 +234,30 @@ _VALID_DOI_TO_URL_PAIRS = (
         "10.22002/7vcz4-d4p68",
         "https://data.caltech.edu/doi/10.22002/7vcz4-d4p68",
     ),
-
 )
 _INVALID_DOI_TO_URL_PAIRS = (
     (
-        "11.5281/zenodo.17544720", # invalid because of wrong prefix
-        "https://zenodo.org/doi/11.5281/zenodo.17544720"
+        "11.5281/zenodo.17544720",  # invalid because of wrong prefix
+        "https://zenodo.org/doi/11.5281/zenodo.17544720",
     ),
     (
-        "10.0/m9.figshare.30511304", # invalid because prefix only contains one number
-        "https://figshare.com/articles/dataset/ab/30511304"
+        "10.0/m9.figshare.30511304",  # invalid because prefix only contains one number
+        "https://figshare.com/articles/dataset/ab/30511304",
     ),
     (
-        "10. 775/kth.eryb7-xe747", # invalid because of whitspace in prefix
+        "10. 775/kth.eryb7-xe747",  # invalid because of whitspace in prefix
         "https://datarepository.kth.se/doi/10. 775/kth.eryb7-xe747",
     ),
     (
-        "10.48436/", # invalid because suffix is empty
+        "10.48436/",  # invalid because suffix is empty
         "https://researchdata.tuwien.ac.at/doi/10.48436/",
     ),
     (
-        "10237/28/b2share.vzgtb-mze32", # invalid because of missing '.' after prefix 10
+        "10237/28/b2share.vzgtb-mze32",  # invalid because of missing '.' after prefix 10
         " https://b2share.eudat.eu/doi/1023728/b2share.vzgtb-mze32",
     ),
     (
-        "10.18131\\g3-87fa-/bg46", # invalid because of backslash instead of forwoard slash
+        "10.18131\\g3-87fa-/bg46",  # invalid because of backslash instead of forwoard slash
         "https://prism.northwestern.edu/records/dsha7-p3p60",
     ),
 )
@@ -357,6 +318,10 @@ class _Dois:
 @pytest.fixture
 def dois():
     return _Dois
+
+
+# Pytest fixtures from test_utils
+from pooch_doi.test_utils.repository import make_doi_resolve_to
 
 
 def pytest_configure(config):
