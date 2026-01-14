@@ -65,6 +65,13 @@ class _DataRepoFactory:
         def homepage(self):
             return "homepage"
 
+        @classmethod
+        def initialize(cls, doi, archive_url):
+            return None
+
+        def licenses(self):
+            return []
+
         def download_url(self, file_name):
             return "download_url"
 
@@ -73,15 +80,11 @@ class _DataRepoFactory:
 
     def __init__(self):
         self.dict = dict()
-        self.base = DataRepository
+        self.base = _DataRepoFactory._BaseImplDataRepository
         self._provide_method_factories()
 
     def _with_attribute(self, attribute: str, value) -> "_DataRepoFactory":
         self.dict[attribute] = value
-        return self
-
-    def with_base_impl(self) -> "_DataRepoFactory":
-        self.base = _DataRepoFactory._BaseImplDataRepository
         return self
 
     # ================================================================
@@ -244,10 +247,7 @@ def make_doi_resolve_to():
 
 
 _VALID_DOI_TO_URL_PAIRS = (
-    (
-        "10.5281/zenodo.17544720", 
-        "https://zenodo.org/doi/10.5281/zenodo.17544720"
-    ),
+    ("10.5281/zenodo.17544720", "https://zenodo.org/doi/10.5281/zenodo.17544720"),
     (
         "10.6084/m9.figshare.30511304",
         "https://figshare.com/articles/dataset/ab/30511304",
@@ -272,31 +272,30 @@ _VALID_DOI_TO_URL_PAIRS = (
         "10.22002/7vcz4-d4p68",
         "https://data.caltech.edu/doi/10.22002/7vcz4-d4p68",
     ),
-
 )
 _INVALID_DOI_TO_URL_PAIRS = (
     (
-        "11.5281/zenodo.17544720", # invalid because of wrong prefix
-        "https://zenodo.org/doi/11.5281/zenodo.17544720"
+        "11.5281/zenodo.17544720",  # invalid because of wrong prefix
+        "https://zenodo.org/doi/11.5281/zenodo.17544720",
     ),
     (
-        "10.0/m9.figshare.30511304", # invalid because prefix only contains one number
-        "https://figshare.com/articles/dataset/ab/30511304"
+        "10.0/m9.figshare.30511304",  # invalid because prefix only contains one number
+        "https://figshare.com/articles/dataset/ab/30511304",
     ),
     (
-        "10. 775/kth.eryb7-xe747", # invalid because of whitspace in prefix
+        "10. 775/kth.eryb7-xe747",  # invalid because of whitspace in prefix
         "https://datarepository.kth.se/doi/10. 775/kth.eryb7-xe747",
     ),
     (
-        "10.48436/", # invalid because suffix is empty
+        "10.48436/",  # invalid because suffix is empty
         "https://researchdata.tuwien.ac.at/doi/10.48436/",
     ),
     (
-        "10237/28/b2share.vzgtb-mze32", # invalid because of missing '.' after prefix 10
+        "10237/28/b2share.vzgtb-mze32",  # invalid because of missing '.' after prefix 10
         " https://b2share.eudat.eu/doi/1023728/b2share.vzgtb-mze32",
     ),
     (
-        "10.18131\\g3-87fa-/bg46", # invalid because of backslash instead of forwoard slash
+        "10.18131\\g3-87fa-/bg46",  # invalid because of backslash instead of forwoard slash
         "https://prism.northwestern.edu/records/dsha7-p3p60",
     ),
 )

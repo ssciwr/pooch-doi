@@ -1,5 +1,6 @@
 import importlib.metadata
-from typing import Optional, Dict
+from typing import Optional, Dict, List
+import abc
 from .utils import get_logger
 
 DEFAULT_TIMEOUT = 30
@@ -103,7 +104,7 @@ def doi_to_repository(doi):
     return data_repository
 
 
-class DataRepository:  # pylint: disable=too-few-public-methods, missing-class-docstring
+class DataRepository(abc.ABC):  # pylint: disable=too-few-public-methods, missing-class-docstring
     # TODO: add allowed_exceptions
 
     # A URL for an issue tracker for this implementation
@@ -125,6 +126,7 @@ class DataRepository:  # pylint: disable=too-few-public-methods, missing-class-d
     init_requires_requests: bool = True
 
     @property
+    @abc.abstractmethod
     def name(self) -> str:
         """
         The display name of the repository.
@@ -132,6 +134,7 @@ class DataRepository:  # pylint: disable=too-few-public-methods, missing-class-d
         raise NotImplementedError  # pragma: no cover
 
     @property
+    @abc.abstractmethod
     def homepage(self) -> str:
         """
         The homepage URL of the repository.
@@ -141,6 +144,7 @@ class DataRepository:  # pylint: disable=too-few-public-methods, missing-class-d
         raise NotImplementedError  # pragma: no cover
 
     @classmethod
+    @abc.abstractmethod
     def initialize(cls, doi, archive_url):  # pylint: disable=unused-argument
         """
         Initialize the data repository if the given URL points to a
@@ -161,6 +165,21 @@ class DataRepository:  # pylint: disable=too-few-public-methods, missing-class-d
 
         return None  # pragma: no cover
 
+    @abc.abstractmethod
+    def licenses(self):
+        """
+        Use the repository API to get a list of licenses used in
+        this repository.
+
+        Returns
+        ----------
+        licenses : List[License]
+            The list of licenses.
+        -------
+        """
+        raise NotImplementedError
+
+    @abc.abstractmethod
     def download_url(self, file_name):
         """
         Use the repository API to get the download URL for a file given
@@ -179,6 +198,7 @@ class DataRepository:  # pylint: disable=too-few-public-methods, missing-class-d
 
         raise NotImplementedError  # pragma: no cover
 
+    @abc.abstractmethod
     def create_registry(self) -> Dict[str, str]:
         """
         Create a registry dictionary using the data repository's API
