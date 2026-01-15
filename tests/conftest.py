@@ -1,6 +1,5 @@
 from typing import Tuple, Callable
 import pytest
-import requests_mock
 from unittest.mock import MagicMock, patch
 from urllib.parse import urlsplit
 
@@ -212,40 +211,6 @@ def data_repo_factory():
     return new_data_repo_factory
 
 
-class _DoiResolver:
-    def __init__(self):
-        self.m = requests_mock.Mocker()
-
-    def __call__(self, doi: str, archive_url: str, status_code: int = 200):
-        self.m.start()
-        # patch request to doi.org and the resolved URL,
-        # because doi_to_url does follow redirects.
-        self.m.get(
-            f"https://doi.org/{doi}", status_code=302, headers={"Location": archive_url}
-        )
-        self.m.get(archive_url, status_code=status_code)
-        return self
-
-    def __enter__(self):
-        pass
-
-    def __exit__(self, type, value, traceback):
-        self._stop()
-
-    def _stop(self):
-        self.m.reset()
-        self.m.stop()
-
-
-_DOI_RESOLVER = _DoiResolver()
-
-
-@pytest.fixture
-def make_doi_resolve_to():
-    yield _DOI_RESOLVER
-    _DOI_RESOLVER._stop()  # pylint: disable=protected-access
-
-
 _VALID_DOI_TO_URL_PAIRS = (
     ("10.5281/zenodo.17544720", "https://zenodo.org/doi/10.5281/zenodo.17544720"),
     (
@@ -356,6 +321,10 @@ class _Dois:
 @pytest.fixture
 def dois():
     return _Dois
+
+
+# Pytest fixtures from test_utils
+from pooch_doi.test_utils.repository import make_doi_resolve_to
 
 
 def pytest_configure(config):
