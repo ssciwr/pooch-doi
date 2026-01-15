@@ -35,20 +35,3 @@ def is_valid_doi(doi: str) -> bool:
 def assert_valid_doi(doi: str):
     if not is_valid_doi(doi):
         raise ValueError(f"Invalid DOI: {doi!s}")
-
-
-def parse_doi(doi: str) -> Tuple[str, str]:
-    if doi.startswith("doi://"):
-        raise ValueError(
-            f"Invalid DOI link '{doi}'. You must not use '//' after 'doi:'."
-        )
-    if doi.startswith("doi:"):
-        doi = doi[4:]
-    parts = doi.split("/")
-    if "zenodo" in parts[1].lower():
-        netloc = "/".join(parts[:2])
-        path = "/" + "/".join(parts[2:])
-    else:
-        netloc = "/".join(parts[:-1])
-        path = "/" + parts[-1]
-    return netloc, path

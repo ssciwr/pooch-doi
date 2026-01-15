@@ -16,7 +16,7 @@ except ImportError:
 
 from pooch import Pooch, retrieve
 from .repository import doi_to_repository
-from .utils import parse_doi, assert_valid_doi
+from .utils import assert_valid_doi
 
 
 class DOIPooch(Pooch):
