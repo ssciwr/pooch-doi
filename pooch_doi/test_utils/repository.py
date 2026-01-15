@@ -192,6 +192,7 @@ def create_data_repo_tester_type():
 
 
 def _do_sanity_check(data_repo_class):
+    # TODO: add sanity checks
     # here some sanity checks are performed
     # - check that init_requires_requests holds its promise by fuzzing initialize
     # - check that initialize only throws allowed_exceptions
