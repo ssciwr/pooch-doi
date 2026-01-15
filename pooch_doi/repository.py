@@ -2,6 +2,7 @@ import importlib.metadata
 from typing import Optional, Dict, List
 import abc
 from .utils import get_logger
+from .license import License
 
 DEFAULT_TIMEOUT = 30
 
@@ -166,7 +167,7 @@ class DataRepository(abc.ABC):  # pylint: disable=too-few-public-methods, missin
         return None  # pragma: no cover
 
     @abc.abstractmethod
-    def licenses(self):
+    def licenses(self) -> List[License]:
         """
         Use the repository API to get a list of licenses used in
         this repository.
