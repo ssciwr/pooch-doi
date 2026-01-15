@@ -45,10 +45,10 @@ def test_retrieve_from_doi_with_repos_available(
     make_doi_resolve_to(doi, url)
 
     # craft a fake repo and make it available
-    d1 = data_repo_factory().with_base_impl()
+    d1 = data_repo_factory()
     d1 = d1.with_download_url.return_value(url)
     d1 = d1.with_initialize.match_domain("zenodo.org")
-    d1 = d1.create_instance()
+    d1 = d1.create_type()
     data_repo_manager.make_available(d1)
 
     pooch_doi.retrieve_from_doi(
@@ -79,10 +79,10 @@ def test_retrieve_from_doi_with_invalid_doi(
     make_doi_resolve_to(doi, url)
 
     # craft a fake repo and make it available
-    d1 = data_repo_factory().with_base_impl()
+    d1 = data_repo_factory()
     d1 = d1.with_download_url.return_value(url)
     d1 = d1.with_initialize.match_domain("zenodo.org")
-    d1 = d1.create_instance()
+    d1 = d1.create_type()
     data_repo_manager.make_available(d1)
 
     with pytest.raises(ValueError, match=f"Invalid DOI: {doi!s}"):
@@ -112,11 +112,11 @@ def test_retrieve_from_doi_without_hash(
     make_doi_resolve_to(doi, url)
 
     # craft a fake repo and make it available
-    d1 = data_repo_factory().with_base_impl()
+    d1 = data_repo_factory()
     d1 = d1.with_download_url.return_value(url)
     d1 = d1.with_initialize.match_domain("zenodo.org")
     d1 = d1.with_create_registry.return_value({"result_values": "hash"})
-    d1 = d1.create_instance()
+    d1 = d1.create_type()
     data_repo_manager.make_available(d1)
 
     pooch_doi.retrieve_from_doi(
