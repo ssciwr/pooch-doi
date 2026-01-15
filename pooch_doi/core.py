@@ -29,7 +29,7 @@ class DOIPooch(Pooch):
 
         if populate_registry:
             self.load_registry_from_doi()
-    
+
     @cached_property
     def data_repository(self):
         assert_valid_doi(self.doi)
@@ -37,7 +37,7 @@ class DOIPooch(Pooch):
 
     def download_url(self, fname):
         return self.data_repository.download_url(fname)
-    
+
     def get_url(self, fname):
         return self.download_url(fname)
 
@@ -49,6 +49,7 @@ class DOIPooch(Pooch):
 
         # Update registry for this repository
         self.registry = data_repository.create_registry()
+
 
 def retrieve_from_doi(
     doi: str,

@@ -105,7 +105,9 @@ def doi_to_repository(doi):
     return data_repository
 
 
-class DataRepository(abc.ABC):  # pylint: disable=too-few-public-methods, missing-class-docstring
+class DataRepository(
+    abc.ABC
+):  # pylint: disable=too-few-public-methods, missing-class-docstring
     # TODO: add allowed_exceptions
 
     # A URL for an issue tracker for this implementation

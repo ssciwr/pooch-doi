@@ -6,7 +6,7 @@ from pooch_doi.repository import (
 )
 
 
-@pytest.mark.parametrize("status_code", [200,201])
+@pytest.mark.parametrize("status_code", [200, 201])
 @pytest.mark.unit
 def test_doi_to_url_successful_resolution(status_code, dois, make_doi_resolve_to):
     for doi, archive_url in dois.n_valid_doi_to_url_pairs(2):
@@ -14,7 +14,7 @@ def test_doi_to_url_successful_resolution(status_code, dois, make_doi_resolve_to
             assert doi_to_url(doi) == archive_url
 
 
-@pytest.mark.parametrize("status_code", [403,404,500])
+@pytest.mark.parametrize("status_code", [403, 404, 500])
 @pytest.mark.unit
 def test_doi_to_url_failed_resolution(status_code, dois, make_doi_resolve_to):
     for doi, archive_url in dois.n_valid_doi_to_url_pairs(2):
