@@ -1,11 +1,5 @@
 import pytest
-import pooch
 import pooch_doi
-from pooch_doi.repository import (
-    DataRepository,
-    doi_to_url,
-    _get_all_available_data_repositories,
-)
 
 
 def test_retrieve_from_doi_without_repos_available(
