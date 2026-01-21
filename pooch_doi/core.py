@@ -28,12 +28,8 @@ class DOIPooch(Pooch):
         return self.download_url(fname)
 
     def load_registry_from_doi(self):
-        # Create a repository instance
-        assert_valid_doi(self.base_url)
-        data_repository = doi_to_repository(self.base_url)
-
         # Update registry for this repository
-        self.registry = data_repository.create_registry()
+        self.registry = self.data_repository.create_registry()
 
 
 def retrieve_from_doi(
