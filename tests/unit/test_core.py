@@ -8,8 +8,8 @@ def test_retrieve_from_doi_without_repos_available(
     # we assert that retrieve methode works properly so its enough to check
     # if the parameters of the retrieve function are correct
     mock_retrieve = mocker.patch("pooch_doi.core.retrieve")
-    doi = "10.5281/zenodo.17544720"
-    url = "https://zenodo.org/doi/10.5281/zenodo.17544720"
+    doi = "10.5281/zenodo.4924875"
+    url = "https://zenodo.org/doi/10.5281/zenodo.4924875"
     # make doi resolve to a valid url
     make_doi_resolve_to(doi, url)
     # make zero repos available
@@ -33,8 +33,8 @@ def test_retrieve_from_doi_with_repos_available(
     # we assert that retrieve methode works properly so its enough to check
     # if the parameters of the retrieve function are correct
     mock_retrieve = mocker.patch("pooch_doi.core.retrieve")
-    doi = "10.5281/zenodo.17544720"
-    url = "https://zenodo.org/doi/10.5281/zenodo.17544720"
+    doi = "10.5281/zenodo.4924875"
+    url = "https://zenodo.org/doi/10.5281/zenodo.4924875"
     # make doi resolve to a valid url
     make_doi_resolve_to(doi, url)
 
@@ -67,8 +67,8 @@ def test_retrieve_from_doi_with_invalid_doi(
     # this test will fail right now because the doi_is_valid function is not implemented yet (returns true)
     mock_retrieve = mocker.patch("pooch_doi.core.retrieve")
     # doi is invalid:
-    doi = "11.5281/zenodo.17544720"
-    url = "https://zenodo.org/doi/11.5281/zenodo.17544720"
+    doi = "11.5281/zenodo.4924875"
+    url = "https://zenodo.org/doi/11.5281/zenodo.4924875"
     # make doi resolve to a valid url
     make_doi_resolve_to(doi, url)
 
@@ -100,8 +100,8 @@ def test_retrieve_from_doi_without_hash(
     # retrieve_from_doi should always give the retrieve methode a hash
     # this test will fail right now because its not implemented yet
     mock_retrieve = mocker.patch("pooch_doi.core.retrieve")
-    doi = "10.5281/zenodo.17544720"
-    url = "https://zenodo.org/doi/10.5281/zenodo.17544720"
+    doi = "10.5281/zenodo.4924875"
+    url = "https://zenodo.org/doi/10.5281/zenodo.4924875"
     # make doi resolve to a valid url
     make_doi_resolve_to(doi, url)
 
