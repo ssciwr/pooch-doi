@@ -206,10 +206,7 @@ class _DataRepoFactory:
 
 @pytest.fixture
 def data_repo_factory():
-    def new_data_repo_factory() -> _DataRepoFactory:
-        return _DataRepoFactory()
-
-    return new_data_repo_factory
+    return _DataRepoFactory
 
 
 _VALID_DOI_TO_URL_PAIRS = (
