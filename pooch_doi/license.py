@@ -33,3 +33,4 @@ class License:
     description: Optional[str] = None
     identifiers: List[LicenseIdentifier] = dataclasses.field(default_factory=list)
     references: List[LicenseReference] = dataclasses.field(default_factory=list)
+    copyright: Optional[str] = None
