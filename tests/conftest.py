@@ -90,6 +90,11 @@ class _DataRepoFactory:
     # ================================================================
     # Class attribute setters
 
+    def with_allowed_exceptions(
+        self, allowed_exceptions: Tuple[type[Exception]]
+    ) -> "_DataRepoFactory":
+        return self._with_attribute("allowed_exceptions", allowed_exceptions)
+
     def with_issue_tracker(self, issue_tracker: str) -> "_DataRepoFactory":
         return self._with_attribute("issue_tracker", issue_tracker)
 
