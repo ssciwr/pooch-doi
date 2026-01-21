@@ -72,11 +72,10 @@ try:
             super().__init__(*args, **kwargs)
 
         def register_uri(self, *args, **kwargs):
-            args = list(args)
             if len(args) >= 2:
                 method, uri, *rest = args
                 args = (method, urljoin(self.base_url, uri), *rest)
-            super().register_uri(*tuple(args), **kwargs)
+            super().register_uri(*args, **kwargs)
 
 except ImportError:
     raise ImportError(
