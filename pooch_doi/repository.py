@@ -1,5 +1,6 @@
 import importlib.metadata
-from typing import Optional, Dict, List
+from typing import Optional, Dict, List, Tuple
+import warnings
 import abc
 from .utils import get_logger
 from .license import License
@@ -77,12 +78,12 @@ def doi_to_repository(doi):
             )
             if data_repository is not None:
                 break
-        except () as e:  # TODO: add whitelisted exceptions
+        except repo.allowed_exceptions as e:
             raise e
         except Exception as e:
-            msg = f"Repository {repo.name} failed with exception: {e!s}."
+            msg = f"Repository Implementation '{repo.__name__}' failed with exception: '{e!s}'."
             if repo.issue_tracker is not None:
-                msg += f"Please open an issue at {repo.issue_tracker}."
+                msg += f" Please open an issue at '{repo.issue_tracker}'."
             get_logger().warning(msg)
 
     if data_repository is None:
@@ -91,15 +92,16 @@ def doi_to_repository(doi):
         repository = urlsplit(archive_url).netloc
         # TODO: refine error message
         raise ValueError(
-            f"Invalid data repository '{repository}'. "
-            "To request or contribute support for this repository, "
+            f"Invalid data repository '{repository}'."
+            "To request or contribute support for this repository,"
             "please open an issue at https://github.com/ssciwr/pooch-doi/issues"
         )
 
     if data_repository.user_warning is not None:
-        get_logger().warning(
-            f"Selected Repository {data_repository.name} issued a warning:"
-            f"{data_repository.user_warning}"
+        warnings.warn(
+            f"Selected Repository '{data_repository.name}' issued a warning: {data_repository.user_warning}",
+            category=UserWarning,
+            stacklevel=2,
         )
 
     return data_repository
@@ -108,7 +110,11 @@ def doi_to_repository(doi):
 class DataRepository(
     abc.ABC
 ):  # pylint: disable=too-few-public-methods, missing-class-docstring
-    # TODO: add allowed_exceptions
+    # Exceptions that are explicitly marked as _valid_ for the Repository to throw during initialize.
+    # Exceptions that are thrown in initialize and are ...
+    #   - in this list, will get passed on to the callee.
+    #   - not in this list, will not get passed on to the callee and instead be silently catched.
+    allowed_exceptions: Tuple[type[Exception]] = ()
 
     # A URL for an issue tracker for this implementation
     issue_tracker: Optional[str] = None
