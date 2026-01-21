@@ -30,8 +30,6 @@ def test_retrieve_from_doi_without_repos_available(
 def test_retrieve_from_doi_with_repos_available(
     mocker, data_repo_factory, data_repo_manager, make_doi_resolve_to
 ):
-    # we assert that retrieve methode works properly so its enough to check
-    # if the parameters of the retrieve function are correct
     mock_retrieve = mocker.patch("pooch_doi.core.retrieve")
     doi = "10.5281/zenodo.4924875"
     url = "https://zenodo.org/doi/10.5281/zenodo.4924875"
@@ -62,9 +60,6 @@ def test_retrieve_from_doi_with_repos_available(
 def test_retrieve_from_doi_with_invalid_doi(
     mocker, data_repo_factory, data_repo_manager, make_doi_resolve_to
 ):
-    # we assert that retrieve methode works properly so its enough to check
-    # if the parameters of the retrieve function are correct
-    # this test will fail right now because the doi_is_valid function is not implemented yet (returns true)
     mock_retrieve = mocker.patch("pooch_doi.core.retrieve")
     # doi is invalid:
     doi = "11.5281/zenodo.4924875"
@@ -95,10 +90,6 @@ def test_retrieve_from_doi_with_invalid_doi(
 def test_retrieve_from_doi_without_hash(
     mocker, data_repo_factory, data_repo_manager, make_doi_resolve_to
 ):
-    # we assert that retrieve methode works properly so its enough to check
-    # if the parameters of the retrieve function are correct
-    # retrieve_from_doi should always give the retrieve methode a hash
-    # this test will fail right now because its not implemented yet
     mock_retrieve = mocker.patch("pooch_doi.core.retrieve")
     doi = "10.5281/zenodo.4924875"
     url = "https://zenodo.org/doi/10.5281/zenodo.4924875"
