@@ -1,19 +1,5 @@
-import functools
 from typing import Optional
 from functools import cached_property
-
-try:
-    from typing import override
-except ImportError:
-    # dummy override decorator
-    from functools import update_wrapper
-
-    def override(func):
-        return functools.update_wrapper(
-            lambda *args, **kwargs: func(*args, **kwargs), func
-        )
-
-
 from pooch import Pooch, retrieve
 from .repository import doi_to_repository
 from .utils import assert_valid_doi
@@ -41,7 +27,6 @@ class DOIPooch(Pooch):
     def get_url(self, fname):
         return self.download_url(fname)
 
-    @override
     def load_registry_from_doi(self):
         # Create a repository instance
         assert_valid_doi(self.base_url)
