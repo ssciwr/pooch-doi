@@ -2,8 +2,7 @@ import logging
 import re
 
 
-LOGGER = logging.Logger("pooch-doi")
-LOGGER.addHandler(logging.StreamHandler())
+LOGGER = logging.getLogger("pooch-doi")
 
 
 def get_logger() -> logging.Logger:
