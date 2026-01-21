@@ -49,7 +49,9 @@ def retrieve_from_doi(
     if known_hash is None:
         registry = data_repository.create_registry()
         if filename not in registry:
-            raise ValueError(f"File '{filename}' not found in registry.")
+            raise ValueError(
+                f"Could not find hash for file '{filename}' in registry and no known_hash provided."
+            )
         known_hash = registry[filename]
 
     # Resolve the download URL
