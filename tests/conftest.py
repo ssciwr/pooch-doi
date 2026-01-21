@@ -77,8 +77,9 @@ class _DataRepoFactory:
         def create_registry(self):
             return {}
 
-    def __init__(self):
+    def __init__(self, typename: str = "FakeDataRepository"):
         self.dict = dict()
+        self.typename = typename
         self.base = _DataRepoFactory._BaseImplDataRepository
         self._provide_method_factories()
 
@@ -202,7 +203,7 @@ class _DataRepoFactory:
     # Class creation methods
 
     def create_type(self) -> type:
-        return type("FakeDataRepository", (self.base,), self.dict)
+        return type(self.typename, (self.base,), self.dict)
 
     def create_instance(self) -> type[DataRepository]:
         return self.create_type()()
