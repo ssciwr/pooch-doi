@@ -26,12 +26,22 @@ def test_doi_to_url_failed_resolution(status_code, dois, make_doi_resolve_to):
 def test_get_all_available_data_repositories(data_repo_manager, data_repo_factory):
     d1 = data_repo_factory().with_init_requires_requests(True).create_type()
     d2 = data_repo_factory().with_init_requires_requests(False).create_type()
+    d3 = data_repo_factory().with_init_requires_requests(False).create_type()
 
-    with data_repo_manager.make_available(d1, d2):
-        assert _get_all_available_data_repositories() == [d2, d1]
+    with data_repo_manager.make_available(d1, d2, d3):
+        assert _get_all_available_data_repositories() == [d2, d3, d1]
 
-    with data_repo_manager.make_available(d2, d1):
-        assert _get_all_available_data_repositories() == [d2, d1]
+    with data_repo_manager.make_available(d2, d1, d3):
+        assert _get_all_available_data_repositories() == [d2, d3, d1]
+
+    with data_repo_manager.make_available(d1, d3, d2):
+        assert _get_all_available_data_repositories() == [d3, d2, d1]
+
+    with data_repo_manager.make_available(d3, d2):
+        assert _get_all_available_data_repositories() == [d3, d2]
+
+    with data_repo_manager.make_available(d2):
+        assert _get_all_available_data_repositories() == [d2]
 
     with data_repo_manager.make_available(d1):
         assert _get_all_available_data_repositories() == [d1]
