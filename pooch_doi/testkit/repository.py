@@ -125,12 +125,17 @@ def make_doi_resolve_to():
 
 class _DataRepositoryTester:
     data_repo_class: type[DataRepository] = None
-    base_url_fallback: Optional[str] = None
+    archive_base_url_fallback: Optional[str] = None
+    api_base_url_fallback: Optional[str] = None
 
-    def __init__(self, base_url: Optional[str] = None):
-        self.base_url = _value_or(
-            _value_or(base_url, self.base_url_fallback), _random_base_url()
+    def __init__(
+        self, archive_base_url: Optional[str] = None, api_base_url: Optional[str] = None
+    ):
+        self.archive_base_url = _value_or(
+            _value_or(archive_base_url, self.archive_base_url_fallback),
+            _random_base_url(),
         )
+        self.api_base_url = _value_or(api_base_url, self.api_base_url_fallback)
         self._repo = None
 
         if self.data_repo_class is None:
@@ -142,7 +147,7 @@ class _DataRepositoryTester:
         doi = _value_or(doi, _random_doi())
         archive_path = _value_or(archive_path, _random_archive_path())
         return self.data_repo_class.initialize(
-            doi, urljoin(self.base_url, archive_path)
+            doi, urljoin(self.archive_base_url, archive_path)
         )
 
     def initialize_repo(self, doi: str, archive_path: str):
@@ -172,18 +177,23 @@ class _DataRepositoryTester:
         assert self._initialize_repo(doi=doi, archive_path=archive_path) is None
 
     def endpoint_mocker(self, always_mock=False):
-        return _new_endpoint_mocker(self.base_url, always_mock=always_mock)
+        return _new_endpoint_mocker(self.api_base_url, always_mock=always_mock)
 
 
 @pytest.fixture(scope="session")
 def create_data_repo_tester_type():
-    def _new(data_repo_type: type, base_url_fallback: Optional[str] = None):
+    def _new(
+        data_repo_type: type,
+        archive_base_url_fallback: Optional[str] = None,
+        api_base_url_fallback: Optional[str] = None,
+    ):
         return type(
             f"{data_repo_type.__name__}Tester",
             (_DataRepositoryTester,),
             {
                 "data_repo_class": data_repo_type,
-                "base_url_fallback": base_url_fallback,
+                "archive_base_url_fallback": archive_base_url_fallback,
+                "api_base_url_fallback": api_base_url_fallback,
             },
         )
 
