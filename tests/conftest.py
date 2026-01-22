@@ -326,8 +326,8 @@ def dois():
     return _Dois
 
 
-# Pytest fixtures from test_utils
-from pooch_doi.test_utils.repository import make_doi_resolve_to
+# Pytest fixtures from testkit
+from pooch_doi.testkit.repository import make_doi_resolve_to
 
 
 def pytest_configure(config):

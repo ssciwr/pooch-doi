@@ -8,6 +8,6 @@ except ImportError:
     """
     )
 
-pytest.register_assert_rewrite("pooch_doi.test_utils.repository")
+pytest.register_assert_rewrite("pooch_doi.testkit.repository")
 
 from .repository import *
