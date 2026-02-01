@@ -2,6 +2,8 @@ from typing import Tuple, Callable
 import pytest
 from unittest.mock import MagicMock, patch
 from urllib.parse import urlsplit
+import tempfile
+import os
 
 from pooch_doi import DataRepository
 
@@ -212,6 +214,14 @@ class _DataRepoFactory:
 @pytest.fixture
 def data_repo_factory():
     return _DataRepoFactory
+
+
+@pytest.fixture
+def tempdir():
+    with tempfile.TemporaryDirectory(
+        prefix=".pooch_doi_tempdir", dir=os.getcwd()
+    ) as tempdir:
+        yield tempdir
 
 
 _VALID_DOI_TO_URL_PAIRS = (

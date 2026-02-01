@@ -21,11 +21,9 @@ class DOIPooch(Pooch):
         assert_valid_doi(self.doi)
         return doi_to_repository(self.doi)
 
-    def download_url(self, fname):
-        return self.data_repository.download_url(fname)
-
     def get_url(self, fname):
-        return self.download_url(fname)
+        super()._assert_file_in_registry(fname)
+        return self.data_repository.download_url(fname)
 
     def load_registry_from_doi(self):
         # Update registry for this repository
