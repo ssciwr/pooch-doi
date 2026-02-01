@@ -186,7 +186,7 @@ class DataRepository(
             The list of licenses.
         -------
         """
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: no cover
 
     @abc.abstractmethod
     def download_url(self, file_name):
