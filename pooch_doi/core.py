@@ -11,8 +11,6 @@ class DOIPooch(Pooch):
         self.doi = doi
         super().__init__(path, doi, **kwargs)
 
-        # TODO: maybe ensure doi is no other protocol
-
         if populate_registry:
             self.load_registry_from_doi()
 

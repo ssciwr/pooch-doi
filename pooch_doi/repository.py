@@ -113,7 +113,7 @@ class DataRepository(
     # Exceptions that are explicitly marked as _valid_ for the Repository to throw during initialize.
     # Exceptions that are thrown in initialize and are ...
     #   - in this list, will get passed on to the callee.
-    #   - not in this list, will not get passed on to the callee and instead be silently catched.
+    #   - not in this list, will not get passed on to the callee and are instead silently caught.
     allowed_exceptions: Tuple[type[Exception]] = ()
 
     # A URL for an issue tracker for this implementation
