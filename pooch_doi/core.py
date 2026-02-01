@@ -27,6 +27,9 @@ class DOIPooch(Pooch):
         # Update registry for this repository
         self.registry = self.data_repository.create_registry()
 
+    def licenses(self):
+        return self.data_repository.licenses()
+
 
 def retrieve_from_doi(
     doi: str,

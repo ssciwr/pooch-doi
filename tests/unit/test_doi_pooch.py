@@ -1,6 +1,7 @@
 import pytest
-import pooch_doi
 import pathlib
+import pooch_doi
+from pooch_doi.license import *
 
 doi = "10.5281/zenodo.4924875"
 archive_url = "https://zenodo.org/doi/10.5281/zenodo.4924875"
@@ -56,7 +57,7 @@ def test_doi_pooch_fetch_with_registry(
     d1 = d1.create_type()
     data_repo_manager.make_available(d1)
 
-    POOCH = pooch_doi.DOIPooch(
+    doi_pooch = pooch_doi.DOIPooch(
         path=tempdir,
         doi=doi,
         registry={
@@ -66,8 +67,8 @@ def test_doi_pooch_fetch_with_registry(
     )
 
     downloader = OfflineDownloader("dataset/tiny-data.txt")
-    fname = POOCH.fetch("tiny-data.txt", downloader=downloader)
-    assert downloader.latest_call == (download_url, POOCH, False)
+    fname = doi_pooch.fetch("tiny-data.txt", downloader=downloader)
+    assert downloader.latest_call == (download_url, doi_pooch, False)
     assert does_file_match_data_file(fname, "dataset/tiny-data.txt")
 
 
@@ -90,15 +91,15 @@ def test_doi_pooch_fetch_with_populate_registry(
     d1 = d1.create_type()
     data_repo_manager.make_available(d1)
 
-    POOCH = pooch_doi.DOIPooch(
+    doi_pooch = pooch_doi.DOIPooch(
         path=tempdir,
         doi=doi,
         populate_registry=True,
     )
 
     downloader = OfflineDownloader("dataset/tiny-data.txt")
-    fname = POOCH.fetch("tiny-data.txt", downloader=downloader)
-    assert downloader.latest_call == (download_url, POOCH, False)
+    fname = doi_pooch.fetch("tiny-data.txt", downloader=downloader)
+    assert downloader.latest_call == (download_url, doi_pooch, False)
     assert does_file_match_data_file(fname, "dataset/tiny-data.txt")
 
 
@@ -121,15 +122,15 @@ def test_doi_pooch_fetch_with_load_registry_from_doi(
     d1 = d1.create_type()
     data_repo_manager.make_available(d1)
 
-    POOCH = pooch_doi.DOIPooch(
+    doi_pooch = pooch_doi.DOIPooch(
         path=tempdir,
         doi=doi,
     )
-    POOCH.load_registry_from_doi()
+    doi_pooch.load_registry_from_doi()
 
     downloader = OfflineDownloader("dataset/tiny-data.txt")
-    fname = POOCH.fetch("tiny-data.txt", downloader=downloader)
-    assert downloader.latest_call == (download_url, POOCH, False)
+    fname = doi_pooch.fetch("tiny-data.txt", downloader=downloader)
+    assert downloader.latest_call == (download_url, doi_pooch, False)
     assert does_file_match_data_file(fname, "dataset/tiny-data.txt")
 
 
@@ -152,7 +153,7 @@ def test_doi_pooch_is_available(
     d1 = d1.create_type()
     data_repo_manager.make_available(d1)
 
-    POOCH = pooch_doi.DOIPooch(
+    doi_pooch = pooch_doi.DOIPooch(
         path=tempdir,
         doi=doi,
         populate_registry=True,
@@ -160,19 +161,19 @@ def test_doi_pooch_is_available(
 
     # TESTCASE 1: File in registry and available
     downloader = OfflineDownloader("dataset/tiny-data.txt")
-    assert POOCH.is_available("tiny-data.txt", downloader=downloader)
-    assert downloader.latest_call == (download_url, POOCH, True)
+    assert doi_pooch.is_available("tiny-data.txt", downloader=downloader)
+    assert downloader.latest_call == (download_url, doi_pooch, True)
 
     # TESTCASE 2: File in registry and not available
     downloader = OfflineDownloader("dataset/tiny-data-non-existent.txt")
-    assert not POOCH.is_available("tiny-data.txt", downloader=downloader)
-    assert downloader.latest_call == (download_url, POOCH, True)
+    assert not doi_pooch.is_available("tiny-data.txt", downloader=downloader)
+    assert downloader.latest_call == (download_url, doi_pooch, True)
 
     # TESTCASE 3: File not in registry
     with pytest.raises(
         ValueError, match="File 'tiny-data-non-existent.txt' is not in the registry."
     ):
-        POOCH.is_available("tiny-data-non-existent.txt")
+        doi_pooch.is_available("tiny-data-non-existent.txt")
 
 
 def test_doi_pooch_get_url(
@@ -194,17 +195,52 @@ def test_doi_pooch_get_url(
     d1 = d1.create_type()
     data_repo_manager.make_available(d1)
 
-    POOCH = pooch_doi.DOIPooch(
+    doi_pooch = pooch_doi.DOIPooch(
         path=tempdir,
         doi=doi,
         populate_registry=True,
     )
 
     # TESTCASE 1: File in registry
-    assert POOCH.get_url("tiny-data.txt") == download_url
+    assert doi_pooch.get_url("tiny-data.txt") == download_url
 
     # TESTCASE 2: File not in registry
     with pytest.raises(
         ValueError, match="File 'tiny-data-non-existent.txt' is not in the registry."
     ):
-        POOCH.get_url("tiny-data-non-existent.txt")
+        doi_pooch.get_url("tiny-data-non-existent.txt")
+
+
+def test_doi_pooch_licenses(
+    tempdir, data_repo_factory, data_repo_manager, make_doi_resolve_to
+):
+    test_license = License(
+        name="Other (Public Domain)",
+        description="License one",
+        copyright="2026 The Authors",
+    )
+
+    # make doi resolve to a valid url
+    make_doi_resolve_to(doi, archive_url)
+
+    # craft a fake repo and make it available
+    d1 = data_repo_factory()
+    d1 = d1.with_download_url.return_value(download_url)
+    d1 = d1.with_create_registry.return_value(
+        {
+            "tiny-data.txt": "md5:70e2afd3fd7e336ae478b1e740a5f08e",
+            "store.zip": "md5:7008231125631739b64720d1526619ae",
+        }
+    )
+    d1 = d1.with_licenses.return_value([test_license])
+    d1 = d1.with_initialize.match_domain("zenodo.org")
+    d1 = d1.create_type()
+    data_repo_manager.make_available(d1)
+
+    doi_pooch = pooch_doi.DOIPooch(
+        path=tempdir,
+        doi=doi,
+        populate_registry=True,
+    )
+
+    assert doi_pooch.licenses() == [test_license]
