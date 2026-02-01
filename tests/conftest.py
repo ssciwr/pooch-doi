@@ -178,6 +178,14 @@ class _DataRepoFactory:
 
             return self._set(_initialize_match_domain)
 
+    class _LicensesMethod(
+        _FuncStrategyMixin,
+        _ReturnValueStrategyMixin,
+        _RaiseExceptionStrategyMixin,
+        _BaseMethodFactory,
+    ):
+        _method_name = "licenses"
+
     class _DownloadURLMethod(
         _FuncStrategyMixin,
         _ReturnValueStrategyMixin,
@@ -198,6 +206,7 @@ class _DataRepoFactory:
         self.with_name = _DataRepoFactory._NameMethod(self)
         self.with_homepage = _DataRepoFactory._HomepageMethod(self)
         self.with_initialize = _DataRepoFactory._InitializeMethod(self)
+        self.with_licenses = _DataRepoFactory._LicensesMethod(self)
         self.with_download_url = _DataRepoFactory._DownloadURLMethod(self)
         self.with_create_registry = _DataRepoFactory._CreateRegistryMethod(self)
 
