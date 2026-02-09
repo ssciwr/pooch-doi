@@ -131,15 +131,17 @@ class _DataRepositoryTester:
     def __init__(
         self, archive_base_url: Optional[str] = None, api_base_url: Optional[str] = None
     ):
+        if self.data_repo_class is None:
+            raise ValueError("data_repo_class must be provided.")
+
         self.archive_base_url = _value_or(
             _value_or(archive_base_url, self.archive_base_url_fallback),
             _random_base_url(),
         )
-        self.api_base_url = _value_or(api_base_url, self.api_base_url_fallback)
+        self.api_base_url = _value_or(
+            _value_or(api_base_url, self.api_base_url_fallback), _random_base_url()
+        )
         self._repo = None
-
-        if self.data_repo_class is None:
-            raise ValueError("data_repo_class must be provided.")
 
     def _initialize_repo(
         self, doi: Optional[str] = None, archive_path: Optional[str] = None
