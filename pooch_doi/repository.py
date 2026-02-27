@@ -126,6 +126,15 @@ class DataRepository(
     # from this repository is accessible via pooch).
     full_support: bool = True
 
+    # Whether this repository should be hidden from the list of all repository implementations
+    # gathered by the pooch-repositories package. This is useful if e.g. a package defines
+    # data repository implementations that are not relevant to the user, but an implementation
+    # detail. Example: There are implementations for InvenioRDM and DataVerse that short-cut
+    # initialization based on known instances of these data repositories. While a very useful
+    # feature, it is not very insightful to end users of having this listed separately in the
+    # table of supported data repositories.
+    omit_from_repository_list: bool = False
+
     # A warning message to display to the end user if this repository is used.
     # This can be useful whenever a data repository is only partially supported.
     user_warning: Optional[str] = None
