@@ -234,10 +234,10 @@ def tempdir():
 
 
 _VALID_DOI_TO_URL_PAIRS = (
-    ("10.5281/zenodo.17544720", "https://zenodo.org/doi/10.5281/zenodo.17544720"),
+    ("10.5281/zenodo.17544720", "https://zenodo.org/records/17544720"),
     (
         "10.6084/m9.figshare.30511304",
-        "https://figshare.com/articles/dataset/ab/30511304",
+        "https://figshare.com/articles/dataset/Untitled_I_b_Deterministic_Origins_and_Outbound_Predictions_for_3I_ATLAS_C_2025_N1_b_b_Predictable_Field-Compression_Signatures_Explained_by_Baryonic_Matter_Physics_b_tem/30511304",
     ),
     (
         "10.71775/kth.eryb7-xe747",
