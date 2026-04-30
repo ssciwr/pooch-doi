@@ -13,10 +13,10 @@ build-backend = "setuptools.build_meta"
 # single source of truth for pooch_doi's version
 [project]
 name = "pooch_doi"
-description = "Add short description here"
+description = "Enable pooch to work with DOIs"
 readme = "README.md"
 maintainers = [
-    { name = "Dominic Kempf", email = "your@email.com" },
+    { name = "Dominic Kempf", email = "ssc@uni-heidelberg.de" },
 ]
 dynamic = ["version"]
 requires-python = ">=3.9"
@@ -38,12 +38,6 @@ tests = [
     "pytest-mock",
     "requests-mock",
 ]
-docs = [
-    "sphinx",
-    "sphinx_mdinclude",
-    "sphinx_rtd_theme",
-]
-
 
 # The following section contains setuptools-specific configuration
 # options. For a full reference of available options, check the overview
