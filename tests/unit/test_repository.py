@@ -19,7 +19,7 @@ def test_doi_to_url_successful_resolution(status_code, dois, make_doi_resolve_to
 @pytest.mark.parametrize("status_code", [403, 404, 500])
 @pytest.mark.unit
 def test_doi_to_url_failed_resolution(status_code, dois, make_doi_resolve_to):
-    for doi, archive_url in dois.n_valid_doi_to_url_pairs(2):
+    for doi, archive_url in dois.n_invalid_doi_to_url_pairs(2):
         with make_doi_resolve_to(doi, archive_url, status_code=status_code):
             with pytest.raises(ValueError):
                 doi_to_url(doi)

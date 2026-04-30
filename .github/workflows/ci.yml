@@ -11,6 +11,15 @@ on:
       - main
   # as well as upon manual triggers through the 'Actions' tab of the Github UI
   workflow_dispatch:
+    inputs:
+      online_testing:
+        description: "Enable online tests (sets POOCH_DOI_ONLINE=1)"
+        required: false
+        type: boolean
+        default: false
+
+env:
+  POOCH_DOI_ONLINE: ${{ (github.event_name == 'workflow_dispatch' && inputs.online_testing) && '1' || '0' }}
 
 jobs:
   build-and-test:
