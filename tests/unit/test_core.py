@@ -1,5 +1,5 @@
 import pytest
-import pooch_doi
+import doiggie
 
 
 def test_retrieve_from_doi_without_repos_available(
@@ -7,7 +7,7 @@ def test_retrieve_from_doi_without_repos_available(
 ):
     # we assert that retrieve methode works properly so its enough to check
     # if the parameters of the retrieve function are correct
-    mock_retrieve = mocker.patch("pooch_doi.core.retrieve")
+    mock_retrieve = mocker.patch("doiggie.core.retrieve")
     doi = "10.5281/zenodo.4924875"
     url = "https://zenodo.org/doi/10.5281/zenodo.4924875"
     # make doi resolve to a valid url
@@ -15,7 +15,7 @@ def test_retrieve_from_doi_without_repos_available(
     # make zero repos available
     data_repo_manager.make_none_available()
     with pytest.raises(ValueError, match="Invalid data repository 'zenodo.org'"):
-        pooch_doi.retrieve_from_doi(
+        doiggie.retrieve_from_doi(
             doi,
             known_hash="hash",
             filename="result_values",
@@ -30,7 +30,7 @@ def test_retrieve_from_doi_without_repos_available(
 def test_retrieve_from_doi_with_repos_available(
     mocker, data_repo_factory, data_repo_manager, make_doi_resolve_to
 ):
-    mock_retrieve = mocker.patch("pooch_doi.core.retrieve")
+    mock_retrieve = mocker.patch("doiggie.core.retrieve")
     doi = "10.5281/zenodo.4924875"
     url = "https://zenodo.org/doi/10.5281/zenodo.4924875"
     # make doi resolve to a valid url
@@ -43,7 +43,7 @@ def test_retrieve_from_doi_with_repos_available(
     d1 = d1.create_type()
     data_repo_manager.make_available(d1)
 
-    pooch_doi.retrieve_from_doi(
+    doiggie.retrieve_from_doi(
         doi,
         known_hash="hash",
         filename="result_values",
@@ -60,7 +60,7 @@ def test_retrieve_from_doi_with_repos_available(
 def test_retrieve_from_doi_with_invalid_doi(
     mocker, data_repo_factory, data_repo_manager, make_doi_resolve_to
 ):
-    mock_retrieve = mocker.patch("pooch_doi.core.retrieve")
+    mock_retrieve = mocker.patch("doiggie.core.retrieve")
     # doi is invalid:
     doi = "11.5281/zenodo.4924875"
     url = "https://zenodo.org/doi/11.5281/zenodo.4924875"
@@ -75,7 +75,7 @@ def test_retrieve_from_doi_with_invalid_doi(
     data_repo_manager.make_available(d1)
 
     with pytest.raises(ValueError, match=f"Invalid DOI: {doi!s}"):
-        pooch_doi.retrieve_from_doi(
+        doiggie.retrieve_from_doi(
             doi,
             known_hash="hash",
             filename="result_values",
@@ -90,7 +90,7 @@ def test_retrieve_from_doi_with_invalid_doi(
 def test_retrieve_from_doi_without_hash(
     mocker, data_repo_factory, data_repo_manager, make_doi_resolve_to
 ):
-    mock_retrieve = mocker.patch("pooch_doi.core.retrieve")
+    mock_retrieve = mocker.patch("doiggie.core.retrieve")
     doi = "10.5281/zenodo.4924875"
     url = "https://zenodo.org/doi/10.5281/zenodo.4924875"
     # make doi resolve to a valid url
@@ -104,7 +104,7 @@ def test_retrieve_from_doi_without_hash(
     d1 = d1.create_type()
     data_repo_manager.make_available(d1)
 
-    pooch_doi.retrieve_from_doi(
+    doiggie.retrieve_from_doi(
         doi,
         known_hash=None,
         filename="file1",
@@ -121,7 +121,7 @@ def test_retrieve_from_doi_without_hash(
 def test_retrieve_from_doi_without_hash_and_non_existent_file(
     mocker, data_repo_factory, data_repo_manager, make_doi_resolve_to
 ):
-    mock_retrieve = mocker.patch("pooch_doi.core.retrieve")
+    mock_retrieve = mocker.patch("doiggie.core.retrieve")
     doi = "10.5281/zenodo.4924875"
     url = "https://zenodo.org/doi/10.5281/zenodo.4924875"
     # make doi resolve to a valid url
@@ -139,7 +139,7 @@ def test_retrieve_from_doi_without_hash_and_non_existent_file(
         ValueError,
         match="Could not find hash for file 'file2' in registry and no known_hash provided",
     ):
-        pooch_doi.retrieve_from_doi(
+        doiggie.retrieve_from_doi(
             doi,
             known_hash=None,
             filename="file2",

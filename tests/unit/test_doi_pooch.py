@@ -1,7 +1,7 @@
 import pytest
 import pathlib
-import pooch_doi
-from pooch_doi.license import *
+import doiggie
+from doiggie.license import *
 
 doi = "10.5281/zenodo.4924875"
 archive_url = "https://zenodo.org/doi/10.5281/zenodo.4924875"
@@ -57,7 +57,7 @@ def test_doi_pooch_fetch_with_registry(
     d1 = d1.create_type()
     data_repo_manager.make_available(d1)
 
-    doi_pooch = pooch_doi.DOIPooch(
+    doi_pooch = doiggie.DOIPooch(
         path=tempdir,
         doi=doi,
         registry={
@@ -91,7 +91,7 @@ def test_doi_pooch_fetch_with_populate_registry(
     d1 = d1.create_type()
     data_repo_manager.make_available(d1)
 
-    doi_pooch = pooch_doi.DOIPooch(
+    doi_pooch = doiggie.DOIPooch(
         path=tempdir,
         doi=doi,
         populate_registry=True,
@@ -122,7 +122,7 @@ def test_doi_pooch_fetch_with_load_registry_from_doi(
     d1 = d1.create_type()
     data_repo_manager.make_available(d1)
 
-    doi_pooch = pooch_doi.DOIPooch(
+    doi_pooch = doiggie.DOIPooch(
         path=tempdir,
         doi=doi,
     )
@@ -153,7 +153,7 @@ def test_doi_pooch_is_available(
     d1 = d1.create_type()
     data_repo_manager.make_available(d1)
 
-    doi_pooch = pooch_doi.DOIPooch(
+    doi_pooch = doiggie.DOIPooch(
         path=tempdir,
         doi=doi,
         populate_registry=True,
@@ -195,7 +195,7 @@ def test_doi_pooch_get_url(
     d1 = d1.create_type()
     data_repo_manager.make_available(d1)
 
-    doi_pooch = pooch_doi.DOIPooch(
+    doi_pooch = doiggie.DOIPooch(
         path=tempdir,
         doi=doi,
         populate_registry=True,
@@ -237,7 +237,7 @@ def test_doi_pooch_licenses(
     d1 = d1.create_type()
     data_repo_manager.make_available(d1)
 
-    doi_pooch = pooch_doi.DOIPooch(
+    doi_pooch = doiggie.DOIPooch(
         path=tempdir,
         doi=doi,
         populate_registry=True,

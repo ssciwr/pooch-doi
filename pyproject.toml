@@ -10,9 +10,9 @@ build-backend = "setuptools.build_meta"
 
 # This section provides general project metadata that is used across
 # a variety of build tools. Notably, the version specified here is the
-# single source of truth for pooch_doi's version
+# single source of truth for doiggie's version
 [project]
-name = "pooch_doi"
+name = "doiggie"
 description = "Enable pooch to work with DOIs"
 readme = "README.md"
 maintainers = [
@@ -44,7 +44,8 @@ tests = [
 # at https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html
 [tool.setuptools]
 packages = [
-    "pooch_doi",
+    "doiggie",
+    "doiggie.testkit",
 ]
 
 # Configure setuptools_scm, which extracts the version number from
@@ -53,7 +54,7 @@ packages = [
 [tool.setuptools_scm]
 version_scheme = "post-release"
 local_scheme = "node-and-date"
-write_to = "pooch_doi/_version.py"
+write_to = "doiggie/_version.py"
 
 # The following is the configuration for the pytest test suite
 [tool.pytest.ini_options]

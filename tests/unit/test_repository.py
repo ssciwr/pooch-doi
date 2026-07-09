@@ -1,7 +1,7 @@
 import pytest
 import logging
 
-from pooch_doi.repository import (
+from doiggie.repository import (
     doi_to_url,
     doi_to_repository,
     _get_all_available_data_repositories,
@@ -91,11 +91,11 @@ def test_doi_to_repository_with_faulty_repo(
     url = "https://zenodo.org/doi/10.5281/zenodo.4924875"
     make_doi_resolve_to(doi, url)
 
-    caplog.set_level(logging.WARNING, logger="pooch-doi")
+    caplog.set_level(logging.WARNING, logger="doiggie")
     assert isinstance(doi_to_repository(doi), zenodo_repo)
     assert caplog.record_tuples == [
         (
-            "pooch-doi",
+            "doiggie",
             logging.WARNING,
             "Repository Implementation 'FaultyRepo' failed with exception: 'Test Exception'. Please open an issue at 'https://issuetracker.de'.",
         )

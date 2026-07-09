@@ -5,7 +5,7 @@ from urllib.parse import urlsplit
 import tempfile
 import os
 
-from pooch_doi import DataRepository
+from doiggie import DataRepository
 
 
 # This class can be used to specifically make a set of mock data repositories available.
@@ -228,7 +228,7 @@ def data_repo_factory():
 @pytest.fixture
 def tempdir():
     with tempfile.TemporaryDirectory(
-        prefix=".pooch_doi_tempdir", dir=os.getcwd()
+        prefix=".doiggie_tempdir", dir=os.getcwd()
     ) as tempdir:
         yield tempdir
 
@@ -346,7 +346,7 @@ def dois():
 
 
 # Pytest fixtures from testkit
-from pooch_doi.testkit.repository import make_doi_resolve_to
+from doiggie.testkit.repository import make_doi_resolve_to
 
 
 def pytest_configure(config):

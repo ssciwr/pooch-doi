@@ -3,7 +3,7 @@ try:
 except ImportError:
     raise ImportError(
         """
-    Pytest is not installed. To use the provided pooch-doi testing utilities,
+    Pytest is not installed. To use the provided doiggie testing utilities,
     please install pytest.
     """
     )
@@ -14,7 +14,7 @@ import string
 import os
 from unittest.mock import MagicMock
 from urllib.parse import urljoin
-from pooch_doi.repository import DataRepository
+from doiggie.repository import DataRepository
 
 # ==============================================================
 # Internal random helpers:
@@ -58,7 +58,7 @@ def _value_or(value, alternative):
 
 def _is_online_testing_enabled():
     try:
-        return bool(int(os.getenv("POOCH_DOI_ONLINE", default=0)))
+        return bool(int(os.getenv("DOIGGIE_ONLINE", default=0)))
     except ValueError:
         return False
 

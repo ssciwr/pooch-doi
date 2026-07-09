@@ -1,4 +1,4 @@
-# Welcome to pooch-doi
+# Welcome to doiggie
 
 [![License](https://img.shields.io/badge/License-BSD%202--Clause-orange.svg)](https://opensource.org/licenses/BSD-2-Clause)
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/ssciwr/pooch-doi/ci.yml?branch=main)](https://github.com/ssciwr/pooch-doi/actions/workflows/ci.yml)
@@ -7,15 +7,15 @@
 
 ## Installation
 
-The Python package `pooch_doi` can be installed from PyPI:
+The Python package `doiggie` can be installed from PyPI:
 
 ```
-python -m pip install pooch_doi
+python -m pip install doiggie
 ```
 
 ## Development installation
 
-If you want to contribute to the development of `pooch_doi`, we recommend
+If you want to contribute to the development of `doiggie`, we recommend
 the following editable installation from this repository:
 
 ```

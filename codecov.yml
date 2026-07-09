@@ -8,4 +8,4 @@ coverage:
 
 ignore:
   - "tests"
-  - "pooch_doi/testkit"
+  - "doiggie/testkit"

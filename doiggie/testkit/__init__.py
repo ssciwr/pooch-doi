@@ -3,11 +3,11 @@ try:
 except ImportError:
     raise ImportError(
         """
-    Pytest is not installed. To use the provided pooch-doi testing utilities,
+    Pytest is not installed. To use the provided doiggie testing utilities,
     please install pytest.
     """
     )
 
-pytest.register_assert_rewrite("pooch_doi.testkit.repository")
+pytest.register_assert_rewrite("doiggie.testkit.repository")
 
 from .repository import *

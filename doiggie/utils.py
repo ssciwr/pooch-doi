@@ -2,7 +2,7 @@ import logging
 import re
 
 
-LOGGER = logging.getLogger("pooch-doi")
+LOGGER = logging.getLogger("doiggie")
 
 
 def get_logger() -> logging.Logger:

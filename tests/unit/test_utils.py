@@ -1,5 +1,5 @@
 import pytest
-from pooch_doi import utils
+from doiggie import utils
 
 
 @pytest.mark.unit
